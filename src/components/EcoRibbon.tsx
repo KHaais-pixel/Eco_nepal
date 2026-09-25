@@ -37,6 +37,16 @@ const CONTENT =
  * content is measured relative to the section and mapped onto both ends.
  */
 function contentExtent(block: HTMLElement, wrapperTop: number) {
+  // A sticky scroll-scene keeps its content on screen for the block's whole
+  // height, even though at rest it looks mostly empty: never cross inside it.
+  const sticky = [...block.querySelectorAll<HTMLElement>('[class*="sticky"],[style*="sticky"]')].some(
+    (el) => getComputedStyle(el).position === "sticky"
+  );
+  if (sticky) {
+    const r = block.getBoundingClientRect();
+    const top = r.top + window.scrollY - wrapperTop;
+    return { top, bottom: top + r.height };
+  }
   const pinned = block.classList.contains("pin-spacer") ? (block.firstElementChild as HTMLElement | null) : null;
   const ref = pinned ?? block;
   const refRect = ref.getBoundingClientRect();

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Container from "@/components/Container";
 import ProcessIntro from "@/components/process/ProcessIntro";
-import ProcessScrub from "@/components/process/ProcessScrub";
+import PlantScrub from "@/components/process/PlantScrub";
 import CTABanner from "@/components/CTABanner";
 
 export const metadata: Metadata = {
@@ -15,7 +15,7 @@ export default function ProcessPage() {
     <>
       <ProcessIntro />
 
-      <ProcessScrub />
+      <PlantScrub />
 
       <Container>
         <p className="mx-auto max-w-[640px] py-16 text-center text-sm leading-[1.6] text-muted-3">

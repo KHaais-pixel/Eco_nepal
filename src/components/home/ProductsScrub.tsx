@@ -22,9 +22,33 @@ const HOLD_PAD = 0.6; // seconds of idle timeline at the end (~10% hold)
 const GLOW_COLOR = "#F28C28";
 const PARTICLE_COLORS = {
   oil: "#E8A33D",
-  char: "#4A554E",
-  steel: "#8A948D",
+  char: "#2F3A33",
+  steel: "#5B6B62",
 };
+
+// Flying product badges: large enough to follow at a glance, each on a
+// white disc with a glow in its product colour.
+const particleWrap =
+  "absolute left-1/2 top-1/2 h-[104px] w-[104px] -translate-x-1/2 -translate-y-1/2 opacity-0";
+
+function ParticleBadge({ color, label, children }: { color: string; label: string; children: React.ReactNode }) {
+  return (
+    <div className="relative h-full w-full">
+      <div
+        className="flex h-full w-full items-center justify-center rounded-full bg-white"
+        style={{ boxShadow: `0 0 0 3px ${color}55, 0 14px 34px -10px ${color}b3, 0 0 46px ${color}40` }}
+      >
+        {children}
+      </div>
+      <span
+        className="font-mono-label absolute left-1/2 top-full mt-3 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 text-[12px] font-semibold text-white"
+        style={{ backgroundColor: color }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
 
 export type HomeProduct = {
   num: string;
@@ -102,6 +126,7 @@ export default function ProductsScrub({ products: homeProducts }: { products: Ho
         gsap.set(glowRef.current, { opacity: 0 });
         gsap.set([oilRef.current, charRef.current, steelRef.current], {
           opacity: 0,
+          scale: 0.4,
           x: 0,
           y: 0,
         });
@@ -151,6 +176,7 @@ export default function ProductsScrub({ products: homeProducts }: { products: Ho
           const offset = getOffset(target);
           const startTime = 2.5 + i * 0.12;
           tl.to(particleRef.current, { opacity: 1, duration: 0.2 }, startTime);
+          tl.to(particleRef.current, { scale: 1, duration: 0.45, ease: "back.out(2.2)" }, startTime);
           tl.to(
             particleRef.current,
             {
@@ -282,62 +308,55 @@ export default function ProductsScrub({ products: homeProducts }: { products: Ho
         />
         <TyreGraphic ref={tyreRef} className="absolute inset-0 h-full w-full opacity-0" />
 
-        <div className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 opacity-0" ref={oilRef}>
-          <svg viewBox="0 0 24 24" className="h-full w-full">
-            <path
-              d="M12 2C12 2 5 11 5 15.5C5 19.09 8.13 22 12 22C15.87 22 19 19.09 19 15.5C19 11 12 2 12 2Z"
-              fill={PARTICLE_COLORS.oil}
-            />
-          </svg>
+        <div className={particleWrap} ref={oilRef}>
+          <ParticleBadge color={PARTICLE_COLORS.oil} label="OIL">
+            <svg viewBox="0 0 24 24" className="h-[60px] w-[60px]">
+              <path
+                d="M12 2C12 2 5 11 5 15.5C5 19.09 8.13 22 12 22C15.87 22 19 19.09 19 15.5C19 11 12 2 12 2Z"
+                fill={PARTICLE_COLORS.oil}
+              />
+              <path d="M9 15.5c0 1.7 1.2 3 2.8 3.3" stroke="#fff" strokeOpacity="0.7" strokeWidth="1.4" strokeLinecap="round" fill="none" />
+            </svg>
+          </ParticleBadge>
         </div>
 
-        <div className="absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 opacity-0" ref={charRef}>
-          <svg viewBox="0 0 32 32" className="h-full w-full">
-            {[
-              [6, 8],
-              [14, 5],
-              [22, 9],
-              [8, 18],
-              [18, 20],
-              [25, 16],
-              [12, 24],
-              [20, 27],
-            ].map(([cx, cy], idx) => (
-              <circle key={idx} cx={cx} cy={cy} r="2.4" fill={PARTICLE_COLORS.char} />
-            ))}
-          </svg>
+        <div className={particleWrap} ref={charRef}>
+          <ParticleBadge color={PARTICLE_COLORS.char} label="CHAR">
+            <svg viewBox="0 0 32 32" className="h-[64px] w-[64px]">
+              {[
+                [6, 8],
+                [14, 5],
+                [22, 9],
+                [8, 18],
+                [18, 20],
+                [25, 16],
+                [12, 24],
+                [20, 27],
+                [15, 13],
+              ].map(([cx, cy], idx) => (
+                <circle key={idx} cx={cx} cy={cy} r="2.9" fill={PARTICLE_COLORS.char} />
+              ))}
+            </svg>
+          </ParticleBadge>
         </div>
 
-        <div className="absolute left-1/2 top-1/2 h-8 w-10 -translate-x-1/2 -translate-y-1/2 opacity-0" ref={steelRef}>
-          <svg viewBox="0 0 40 32" className="h-full w-full" fill="none">
-            <path
-              ref={(el) => {
-                steelStrokeRefs.current[0] = el;
-              }}
-              d="M2 16C10 4 20 4 28 16"
-              stroke={PARTICLE_COLORS.steel}
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-            <path
-              ref={(el) => {
-                steelStrokeRefs.current[1] = el;
-              }}
-              d="M6 24C14 12 24 12 32 24"
-              stroke={PARTICLE_COLORS.steel}
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-            <path
-              ref={(el) => {
-                steelStrokeRefs.current[2] = el;
-              }}
-              d="M10 8C16 -1 24 -1 30 8"
-              stroke={PARTICLE_COLORS.steel}
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-          </svg>
+        <div className={particleWrap} ref={steelRef}>
+          <ParticleBadge color={PARTICLE_COLORS.steel} label="STEEL">
+            <svg viewBox="0 0 40 32" className="h-[54px] w-[68px]" fill="none">
+              {["M2 16C10 4 20 4 28 16", "M6 24C14 12 24 12 32 24", "M10 8C16 -1 24 -1 30 8"].map((d, idx) => (
+                <path
+                  key={d}
+                  ref={(el) => {
+                    steelStrokeRefs.current[idx] = el;
+                  }}
+                  d={d}
+                  stroke={PARTICLE_COLORS.steel}
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              ))}
+            </svg>
+          </ParticleBadge>
         </div>
       </div>
 

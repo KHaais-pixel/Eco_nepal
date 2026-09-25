@@ -15,7 +15,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
       <aside className="border-b border-ink/[0.08] bg-white px-4 py-4 lg:sticky lg:top-0 lg:h-screen lg:border-b-0 lg:border-r lg:px-5 lg:py-6">
         <div className="mb-4 flex items-center justify-between gap-3 lg:mb-8 lg:block">
           <Link href="/admin" className="flex items-center gap-3">
-            <Image src="/brand/logo-full.png" alt="" width={44} height={46} className="h-11 w-auto" />
+            <Image src="/brand/logo-full.png" alt="" width={640} height={656} className="h-11 w-auto" />
             <span className="leading-tight">
               <span className="block text-sm font-bold">Econepal Energy</span>
               <span className="font-mono-label block text-[10px] text-muted-3">ADMIN PANEL</span>

@@ -15,7 +15,7 @@ export default async function LoginPage() {
     <main className="flex min-h-screen items-center justify-center px-5 py-12">
       <div className="w-full max-w-[400px]">
         <div className="mb-8 flex flex-col items-center text-center">
-          <Image src="/brand/logo-full.png" alt="Econepal Energy Industries Pvt. Ltd." width={160} height={166} priority />
+          <Image src="/brand/logo-full.png" className="h-auto w-[170px]" alt="Econepal Energy Industries Pvt. Ltd." width={170} height={174} priority />
           <h1 className="mt-6 font-display text-2xl font-semibold">Admin sign in</h1>
           <p className="mt-1 text-sm text-muted-3">Manage enquiries, products, gallery and company info.</p>
         </div>

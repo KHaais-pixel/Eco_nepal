@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { getCompany } from "@/lib/cms/content";
 
@@ -10,6 +11,19 @@ export default async function Footer() {
       <div className="mx-auto max-w-[1320px] px-5 pb-10 pt-16 sm:px-8">
         <div className="grid grid-cols-1 gap-10 border-b border-cream/10 pb-14 sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-3.5 lg:col-span-2">
+            <Link
+              href="/"
+              aria-label="Eco Nepal Energy home"
+              className="mb-2 w-fit rounded-2xl bg-white p-4 shadow-[0_12px_30px_-18px_rgba(0,0,0,0.6)]"
+            >
+              <Image
+                src="/brand/logo-full.png"
+                alt="Econepal Energy Industries Pvt. Ltd. — Reduce, Recycle, Regenerate"
+                width={640}
+                height={656}
+                className="h-auto w-[150px]"
+              />
+            </Link>
             <span className="text-[17px] font-bold text-cream">Eco Nepal Energy</span>
             <span className="text-sm leading-relaxed">
               Waste tyre recycling &amp; pyrolysis.

@@ -26,9 +26,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-ink/[0.08] bg-cream/[0.82] backdrop-blur-md">
       <div className="mx-auto flex h-[72px] w-full max-w-[1320px] items-center justify-between gap-6 px-5 sm:px-8">
         <Link href="/" className="flex shrink-0 items-center gap-3" aria-label="Eco Nepal Energy home">
-          <span className="flex h-[34px] w-[34px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-forest">
-            <Image src="/brand/logo-icon.png" alt="" width={26} height={17} className="w-[22px]" />
-          </span>
+          <Image src="/brand/logo-mark.png" alt="" width={240} height={254} priority className="h-[46px] w-auto shrink-0" />
           <span className="flex flex-col leading-[1.05]">
             <span className="text-[15px] font-bold tracking-tight text-ink">Eco Nepal Energy</span>
             <span className="font-mono-label text-[10px] text-muted-3">INDUSTRIES PVT. LTD.</span>

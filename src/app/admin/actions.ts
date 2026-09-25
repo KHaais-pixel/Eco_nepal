@@ -134,12 +134,20 @@ export async function saveProduct(_prev: ActionState, form: FormData): Promise<A
     if (!name) return fail("Product name is required.");
 
     const properties = form.getAll("specProperty");
+    const methods = form.getAll("specMethod");
+    const units = form.getAll("specUnit");
     const values = form.getAll("specValue");
     const specs = properties
-      .map((p, i) => ({
-        property: String(p).trim().slice(0, 80),
-        value: String(values[i] ?? "").trim().slice(0, 200),
-      }))
+      .map((p, i) => {
+        const method = String(methods[i] ?? "").trim().slice(0, 60);
+        const unit = String(units[i] ?? "").trim().slice(0, 30);
+        return {
+          property: String(p).trim().slice(0, 80),
+          value: String(values[i] ?? "").trim().slice(0, 200),
+          ...(method ? { method } : {}),
+          ...(unit ? { unit } : {}),
+        };
+      })
       .filter((s) => s.property && s.value)
       .slice(0, 30);
 

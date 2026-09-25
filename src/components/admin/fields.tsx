@@ -59,32 +59,61 @@ export function ConfirmButton({ message, children }: { message: string; children
   );
 }
 
-/** Editable property/value rows, submitted as specProperty[] / specValue[]. */
-export function SpecsEditor({ initial }: { initial: { property: string; value: string }[] }) {
+type SpecRow = { property: string; value: string; method?: string; unit?: string };
+
+/**
+ * Editable specification rows, submitted as specProperty[] / specMethod[] /
+ * specUnit[] / specValue[]. Method and unit are optional.
+ */
+export function SpecsEditor({ initial }: { initial: SpecRow[] }) {
   const [rows, setRows] = useState(() =>
-    initial.map((r) => ({ ...r, key: crypto.randomUUID() }))
+    initial.map((r) => ({ property: r.property, value: r.value, method: r.method ?? "", unit: r.unit ?? "", key: crypto.randomUUID() }))
   );
-  const update = (key: string, patch: Partial<{ property: string; value: string }>) =>
+  const update = (key: string, patch: Partial<SpecRow>) =>
     setRows((rs) => rs.map((r) => (r.key === key ? { ...r, ...patch } : r)));
+  const cols = "grid grid-cols-2 gap-2 sm:grid-cols-[1.3fr_1fr_0.7fr_1fr_auto]";
 
   return (
     <div className="flex flex-col gap-2">
+      <div className={`${cols} font-mono-label hidden text-[11px] text-muted-3 sm:grid`}>
+        <span>TEST PARAMETER</span>
+        <span>METHOD (OPTIONAL)</span>
+        <span>UNIT (OPTIONAL)</span>
+        <span>VALUE</span>
+        <span className="w-11" />
+      </div>
       {rows.map((row) => (
-        <div key={row.key} className="grid grid-cols-[1fr_1.4fr_auto] gap-2">
+        <div key={row.key} className={cols}>
           <input
             name="specProperty"
             value={row.property}
             onChange={(e) => update(row.key, { property: e.target.value })}
-            placeholder="Property (e.g. Density)"
-            aria-label="Specification property"
+            placeholder="e.g. Density at 15°C"
+            aria-label="Test parameter"
+            className={inputClass}
+          />
+          <input
+            name="specMethod"
+            value={row.method}
+            onChange={(e) => update(row.key, { method: e.target.value })}
+            placeholder="e.g. ASTM D 1298"
+            aria-label="Test method"
+            className={inputClass}
+          />
+          <input
+            name="specUnit"
+            value={row.unit}
+            onChange={(e) => update(row.key, { unit: e.target.value })}
+            placeholder="e.g. g/cc"
+            aria-label="Unit"
             className={inputClass}
           />
           <input
             name="specValue"
             value={row.value}
             onChange={(e) => update(row.key, { value: e.target.value })}
-            placeholder="Value (e.g. 0.87–0.93 g/cc)"
-            aria-label="Specification value"
+            placeholder="e.g. 0.87–0.93"
+            aria-label="Value"
             className={inputClass}
           />
           <button
@@ -99,7 +128,9 @@ export function SpecsEditor({ initial }: { initial: { property: string; value: s
       ))}
       <button
         type="button"
-        onClick={() => setRows((rs) => [...rs, { property: "", value: "", key: crypto.randomUUID() }])}
+        onClick={() =>
+          setRows((rs) => [...rs, { property: "", value: "", method: "", unit: "", key: crypto.randomUUID() }])
+        }
         className="inline-flex w-fit items-center gap-1.5 rounded-full border border-ink/15 px-3.5 py-1.5 text-xs font-semibold text-ink hover:border-forest hover:text-forest"
       >
         <Plus className="h-3.5 w-3.5" /> Add row

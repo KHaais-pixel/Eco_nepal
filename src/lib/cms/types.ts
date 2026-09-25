@@ -1,4 +1,5 @@
-export type Spec = { property: string; value: string };
+/** One specification row. Method and unit are optional (lab-test style rows). */
+export type Spec = { property: string; value: string; method?: string; unit?: string };
 
 export type ProductSlug = "pyrolysis-oil" | "fuel-char" | "recovered-steel";
 

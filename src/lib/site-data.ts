@@ -229,15 +229,29 @@ export const pyrolysisOilApplications = [
   "Industrial Ovens",
 ];
 
+// Test results as published at econepalenergy.com.np/furnance.
 export const pyrolysisOilSpecs = [
-  { property: "Density", value: "0.87–0.93 g/cc" },
-  { property: "API Gravity", value: "25.40" },
-  { property: "Viscosity at 100°C", value: "29 SUS" },
-  { property: "Sulfur", value: "Up to 1%" },
-  { property: "Water", value: "Up to 0.25%" },
-  { property: "Ash", value: "Up to 0.05%" },
-  { property: "Calorific Value", value: "10,400 ±3% Cal/g" },
-  { property: "Appearance", value: "Dark / Black" },
+  { property: "Density at 15°C", method: "ASTM D 1298", unit: "g/cc", value: "0.87–0.93" },
+  { property: "API Gravity", method: "ASTM D 1298", unit: "–", value: "25.40" },
+  { property: "Viscosity at 100°C", method: "ASTM D 2161", unit: "SUS", value: "29" },
+  { property: "Sulphur Total", method: "ASTM D 129", unit: "% Wt", value: "Up to 1" },
+  { property: "Water Content", method: "ASTM D 95-05", unit: "% Vol", value: "Up to 0.25" },
+  { property: "Ash", method: "ASTM D 482", unit: "% Wt", value: "Up to 0.05" },
+  { property: "Calorific Value", method: "Bomb Calorimeter", unit: "Cal/g", value: "10400 ± 3%" },
+  { property: "Color / Appearance", method: "ASTM D 1500", unit: "–", value: "Dark / Black" },
+];
+
+// Pyrolysis fuel oil vs. furnace oil vs. light diesel oil
+// (econepalenergy.com.np/furnance).
+export const fuelComparison = [
+  { property: "Density at 15°C", method: "ASTM D 1298", unit: "g/cc", tpo: "0.87–0.93", fo: "0.88–0.98", ldo: "0.85–0.87" },
+  { property: "API Gravity", method: "ASTM D 1298", unit: "–", tpo: "25.40", fo: "13.05", ldo: "27.54" },
+  { property: "Viscosity at 100°C", method: "ASTM D 2161", unit: "SUS", tpo: "29", fo: "65", ldo: "42" },
+  { property: "Sulphur Total", method: "ASTM D 129", unit: "% Wt", tpo: "Up to 1", fo: "Up to 4", ldo: "Up to 1.8" },
+  { property: "Water Content", method: "ASTM D 95-05", unit: "% Vol", tpo: "Up to 0.25", fo: "Up to 1.0", ldo: "Up to 0.25" },
+  { property: "Ash", method: "ASTM D 482", unit: "% Wt", tpo: "Up to 0.05", fo: "Up to 0.1", ldo: "Up to 0.02" },
+  { property: "Calorific Value", method: "Bomb Calorimeter", unit: "Cal/g", tpo: "10400 ± 3%", fo: "10000+", ldo: "10600" },
+  { property: "Color / Appearance", method: "ASTM D 1500", unit: "–", tpo: "Dark / Black", fo: "–", ldo: "–" },
 ];
 
 export const fuelCharApplications = [
@@ -249,14 +263,16 @@ export const fuelCharApplications = [
   "Coal Substitution",
 ];
 
+// Fuel char (pyrolysis carbon powder) specification, as published at
+// econepalenergy.com.np/carbon.
 export const fuelCharSpecs = [
-  { property: "Calorific Value", value: "6,250 ±2% Cal/g" },
-  { property: "Moisture, Maximum", value: "Up to 3%" },
-  { property: "Ash, Maximum", value: "Up to 20%" },
-  { property: "Volatile Matter, Maximum", value: "Up to 3%" },
-  { property: "Fixed Carbon", value: "75–85%" },
-  { property: "Particle Size", value: "Less than 30 Mesh" },
-  { property: "Colour / Appearance", value: "Black" },
+  { property: "Calorific Value", unit: "Cal/g", value: "6250 ± 2%" },
+  { property: "Moisture % (Max)", unit: "%", value: "Up to 3%" },
+  { property: "Ash % (Max)", unit: "%", value: "Up to 20%" },
+  { property: "Volatile Matter % (Max)", unit: "%", value: "Up to 3%" },
+  { property: "Fixed Carbon %", unit: "%", value: "75–85%" },
+  { property: "Particle Size", unit: "Mesh", value: "Less than 30" },
+  { property: "Color / Appearance", unit: "–", value: "Black" },
 ];
 
 export const steelSpecs = [

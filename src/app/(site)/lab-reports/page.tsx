@@ -5,7 +5,9 @@ import Container from "@/components/Container";
 import RevealOnScroll from "@/components/RevealOnScroll";
 import Button from "@/components/Button";
 import CTABanner from "@/components/CTABanner";
+import { SpecTable, FuelComparisonTable } from "@/components/SpecTable";
 import { brochure } from "@/lib/site-data";
+import { getProduct } from "@/lib/cms/content";
 
 export const metadata: Metadata = {
   title: "Lab Reports",
@@ -13,29 +15,8 @@ export const metadata: Metadata = {
     "ASTM test results for Tyre Pyrolysis Oil (TPO), a side-by-side comparison with furnace oil and light diesel oil, and the fuel char specification.",
 };
 
-// Source: econepalenergy.com.np/furnance (TPO specification and comparison)
-// and the company brochure (fuel char specification).
-const tpoSpec = [
-  { param: "Density at 15°C", method: "ASTM D 1298", unit: "g/cc", tpo: "0.87–0.93", fo: "0.88–0.98", ldo: "0.85–0.87" },
-  { param: "API Gravity", method: "ASTM D 1298", unit: "–", tpo: "25.40", fo: "13.05", ldo: "27.54" },
-  { param: "Viscosity at 100°C", method: "ASTM D 2161", unit: "SUS", tpo: "29", fo: "65", ldo: "42" },
-  { param: "Sulphur Total", method: "ASTM D 129", unit: "% Wt", tpo: "Up to 1", fo: "Up to 4", ldo: "Up to 1.8" },
-  { param: "Water Content", method: "ASTM D 95-05", unit: "% Vol", tpo: "Up to 0.25", fo: "Up to 1.0", ldo: "Up to 0.25" },
-  { param: "Ash", method: "ASTM D 482", unit: "% Wt", tpo: "Up to 0.05", fo: "Up to 0.1", ldo: "Up to 0.02" },
-  { param: "Calorific Value", method: "Bomb Calorimeter", unit: "Cal/g", tpo: "10400 ± 3%", fo: "10000+", ldo: "10600" },
-  { param: "Color / Appearance", method: "ASTM D 1500", unit: "–", tpo: "Dark / Black", fo: "–", ldo: "–" },
-];
-
-const fuelCharSpec = [
-  { param: "Calorific Value", unit: "Cal/g", value: "6250 ± 2%" },
-  { param: "Moisture (Max)", unit: "%", value: "Up to 3%" },
-  { param: "Ash (Max)", unit: "%", value: "Up to 20%" },
-  { param: "Volatile Matter (Max)", unit: "%", value: "Up to 3%" },
-  { param: "Fixed Carbon", unit: "%", value: "75–85%" },
-  { param: "Particle Size", unit: "Mesh", value: "Less than 30" },
-  { param: "Color / Appearance", unit: "–", value: "Black" },
-];
-
+// Specification tables come from the admin-editable product specs (seeded
+// from econepalenergy.com.np/furnance and /carbon); the comparison is shared.
 const advantages = [
   "Low density and low viscosity, so it doesn’t need pre-heating like furnace oil before use, which saves energy costs.",
   "Calorific value of 10,400 Cal/g ± 3%, higher than furnace oil.",
@@ -61,9 +42,6 @@ const uses = [
   "Power plants",
 ];
 
-const th = "font-mono-label whitespace-nowrap px-4 py-3.5 text-left text-[11px] font-normal text-cream/80";
-const td = "px-4 py-4 align-top";
-
 function ReportHeading({ num, title, children }: { num: string; title: string; children?: React.ReactNode }) {
   return (
     <RevealOnScroll className="mb-10 flex flex-wrap items-end justify-between gap-6">
@@ -78,7 +56,8 @@ function ReportHeading({ num, title, children }: { num: string; title: string; c
   );
 }
 
-export default function LabReportsPage() {
+export default async function LabReportsPage() {
+  const [oil, fuelChar] = await Promise.all([getProduct("pyrolysis-oil"), getProduct("fuel-char")]);
   return (
     <>
       <section className="mx-auto max-w-[1320px] px-5 pb-[clamp(64px,8vw,110px)] pt-[clamp(120px,16vh,170px)] sm:px-8">
@@ -109,31 +88,7 @@ export default function LabReportsPage() {
         <Container className="py-[clamp(80px,10vw,130px)]">
           <ReportHeading num="01" title="Pyrolysis oil specification" />
           <RevealOnScroll delay={80}>
-            <div className="overflow-x-auto rounded-2xl border border-ink/[0.08] bg-white">
-              <table className="w-full min-w-[640px] border-collapse text-[15px]">
-                <caption className="sr-only">Tyre pyrolysis oil test results</caption>
-                <thead className="bg-forest">
-                  <tr>
-                    <th scope="col" className={th}>S.NO</th>
-                    <th scope="col" className={th}>TEST PARAMETER</th>
-                    <th scope="col" className={th}>METHOD</th>
-                    <th scope="col" className={th}>UNIT</th>
-                    <th scope="col" className={`${th} text-lime`}>PYROLYSIS FUEL OIL</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tpoSpec.map((row, i) => (
-                    <tr key={row.param} className="border-t border-ink/[0.08]">
-                      <td className={`${td} font-mono-label text-xs text-muted-3`}>{String(i + 1).padStart(2, "0")}</td>
-                      <th scope="row" className={`${td} text-left font-semibold text-ink`}>{row.param}</th>
-                      <td className={`${td} text-muted-2`}>{row.method}</td>
-                      <td className={`${td} text-muted-2`}>{row.unit}</td>
-                      <td className={`${td} font-mono-label text-[15px] text-forest`}>{row.tpo}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <SpecTable rows={oil.specs} valueLabel="Pyrolysis Fuel Oil" caption="Tyre pyrolysis oil test results" />
           </RevealOnScroll>
         </Container>
       </section>
@@ -146,37 +101,7 @@ export default function LabReportsPage() {
           </p>
         </ReportHeading>
         <RevealOnScroll delay={80}>
-          <div className="overflow-x-auto rounded-2xl border border-ink/[0.08] bg-white">
-            <table className="w-full min-w-[820px] border-collapse text-[15px]">
-              <caption className="sr-only">
-                Comparison of pyrolysis fuel oil, furnace oil and light diesel oil
-              </caption>
-              <thead className="bg-deep">
-                <tr>
-                  <th scope="col" className={th}>S.NO</th>
-                  <th scope="col" className={th}>TEST PARAMETER</th>
-                  <th scope="col" className={th}>METHOD</th>
-                  <th scope="col" className={th}>UNIT</th>
-                  <th scope="col" className={`${th} bg-forest text-lime`}>PYROLYSIS FUEL OIL</th>
-                  <th scope="col" className={th}>FURNACE OIL</th>
-                  <th scope="col" className={th}>LIGHT DIESEL OIL</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tpoSpec.map((row, i) => (
-                  <tr key={row.param} className="border-t border-ink/[0.08]">
-                    <td className={`${td} font-mono-label text-xs text-muted-3`}>{String(i + 1).padStart(2, "0")}</td>
-                    <th scope="row" className={`${td} text-left font-semibold text-ink`}>{row.param}</th>
-                    <td className={`${td} text-muted-2`}>{row.method}</td>
-                    <td className={`${td} text-muted-2`}>{row.unit}</td>
-                    <td className={`${td} bg-leaf/[0.07] font-mono-label text-[15px] text-forest`}>{row.tpo}</td>
-                    <td className={`${td} font-mono-label text-[15px] text-muted-1`}>{row.fo}</td>
-                    <td className={`${td} font-mono-label text-[15px] text-muted-1`}>{row.ldo}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <FuelComparisonTable />
         </RevealOnScroll>
 
         <div className="mt-[clamp(56px,7vw,96px)] grid grid-cols-1 gap-14 md:grid-cols-2 md:gap-24">
@@ -223,27 +148,7 @@ export default function LabReportsPage() {
             </RevealOnScroll>
           </div>
           <RevealOnScroll delay={80}>
-            <div className="overflow-x-auto rounded-2xl border border-ink/[0.08] bg-white">
-              <table className="w-full min-w-[440px] border-collapse text-[15px]">
-                <caption className="sr-only">Fuel char test results</caption>
-                <thead className="bg-forest">
-                  <tr>
-                    <th scope="col" className={th}>TEST PARAMETER</th>
-                    <th scope="col" className={th}>UNIT</th>
-                    <th scope="col" className={`${th} text-lime`}>FUEL CHAR</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {fuelCharSpec.map((row) => (
-                    <tr key={row.param} className="border-t border-ink/[0.08]">
-                      <th scope="row" className={`${td} text-left font-semibold text-ink`}>{row.param}</th>
-                      <td className={`${td} text-muted-2`}>{row.unit}</td>
-                      <td className={`${td} font-mono-label text-[15px] text-forest`}>{row.value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <SpecTable rows={fuelChar.specs} valueLabel="Fuel Char" caption="Fuel char test results" />
           </RevealOnScroll>
         </Container>
       </section>

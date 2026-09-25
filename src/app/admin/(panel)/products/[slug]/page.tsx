@@ -68,7 +68,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ sl
           </section>
 
           <section className="border-t border-ink/[0.08] pt-8">
-            <Field label="Applications" hint="One per line.">
+            <Field label="Applications" hint="One per line. Shown on the Products overview page.">
               <TextArea name="applications" defaultValue={product.applications.join("\n")} rows={6} />
             </Field>
           </section>

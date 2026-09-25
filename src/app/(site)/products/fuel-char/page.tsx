@@ -4,8 +4,7 @@ import Container from "@/components/Container";
 import ImageBlock from "@/components/ImageBlock";
 import RevealOnScroll from "@/components/RevealOnScroll";
 import Button from "@/components/Button";
-import SpecList from "@/components/SpecList";
-import ApplicationGrid from "@/components/ApplicationGrid";
+import { SpecTable } from "@/components/SpecTable";
 import CTABanner from "@/components/CTABanner";
 import { getProduct } from "@/lib/cms/content";
 
@@ -52,35 +51,21 @@ export default async function FuelCharPage() {
       </section>
 
       <section className="border-y border-ink/[0.08] bg-stone">
-        <Container className="grid grid-cols-1 gap-10 py-[clamp(80px,10vw,130px)] sm:grid-cols-2 sm:gap-24">
-          <RevealOnScroll>
-            <h2 className="mb-5 font-display text-[clamp(36px,4vw,56px)] font-semibold leading-none text-ink">
-              Typical specifications
+        <Container className="py-[clamp(80px,10vw,130px)]">
+          <RevealOnScroll className="mb-10 flex flex-wrap items-end justify-between gap-6">
+            <h2 className="font-display text-[clamp(36px,4vw,56px)] font-semibold leading-none text-ink">
+              Specification
             </h2>
-            <p className="font-mono-label max-w-[320px] text-xs leading-[1.6] text-muted-3">
+            <p className="font-mono-label max-w-[340px] text-xs leading-[1.6] text-muted-3">
               Company-reported figures — confirm against the latest laboratory report
               before publication as official product standards.
             </p>
           </RevealOnScroll>
-          <RevealOnScroll delay={100}>
-            <SpecList rows={product.specs} />
+          <RevealOnScroll delay={80}>
+            <SpecTable rows={product.specs} valueLabel={product.name} caption="Fuel char (pyrolysis carbon powder) specification" />
           </RevealOnScroll>
         </Container>
       </section>
-
-      <Container className="py-[clamp(80px,10vw,130px)]">
-        <RevealOnScroll>
-          <h2 className="mb-12 font-display text-[clamp(36px,4vw,56px)] font-semibold leading-none text-ink">
-            Where it&rsquo;s used
-          </h2>
-        </RevealOnScroll>
-        <ApplicationGrid items={product.applications} />
-        <p className="mt-8 max-w-[520px] text-sm leading-[1.6] text-muted-3">
-          Potential application categories, subject to quality and technical evaluation.
-          End users should confirm suitability against their own requirements before
-          adoption.
-        </p>
-      </Container>
 
       <CTABanner />
     </>

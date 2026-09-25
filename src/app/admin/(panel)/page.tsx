@@ -11,19 +11,17 @@ export default async function DashboardPage() {
   await verifyAdmin();
   const [enquiries, content] = await Promise.all([listEnquiries(), getContent()]);
   const newCount = enquiries.filter((e) => e.status === "new").length;
-  const withImages = content.gallery.filter((g) => g.image).length;
 
   const stats = [
     { label: "New enquiries", value: newCount, href: "/admin/enquiries?status=new" },
     { label: "All enquiries", value: enquiries.length, href: "/admin/enquiries" },
-    { label: "Gallery photos", value: `${withImages} / ${content.gallery.length}`, href: "/admin/gallery" },
     { label: "Products", value: content.products.length, href: "/admin/products" },
   ];
 
   return (
     <>
       <PageHeader title="Dashboard" description="An overview of enquiries and site content." />
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
         {stats.map((s) => (
           <Link key={s.label} href={s.href} className="rounded-2xl border border-ink/[0.08] bg-white p-5 transition-shadow hover:shadow-md">
             <div className="font-display text-3xl font-semibold">{s.value}</div>

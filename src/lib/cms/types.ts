@@ -42,30 +42,9 @@ export type CompanyInfo = {
   chairman: Chairman;
 };
 
-export const GALLERY_CATEGORIES = [
-  "Factory",
-  "Machinery",
-  "Production Process",
-  "Products",
-  "Recovered Steel",
-  "Team & Workers",
-  "Packaging & Dispatch",
-] as const;
-
-export type GalleryCategory = (typeof GALLERY_CATEGORIES)[number];
-
-export type GalleryItem = {
-  id: string;
-  title: string;
-  category: GalleryCategory;
-  alt: string;
-  image: string | null;
-};
-
 export type SiteContent = {
   company: CompanyInfo;
   products: Product[];
-  gallery: GalleryItem[];
 };
 
 export const ENQUIRY_STATUSES = ["new", "contacted", "closed"] as const;

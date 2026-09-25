@@ -19,6 +19,3 @@ export async function getProduct(slug: ProductSlug) {
   return product;
 }
 
-export async function getGallery() {
-  return (await getContent()).gallery;
-}

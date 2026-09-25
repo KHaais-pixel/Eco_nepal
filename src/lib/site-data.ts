@@ -48,7 +48,6 @@ export const navItems: NavItem[] = [
   { label: "Products", href: "/products", children: productLinks },
   { label: "Our Process", href: "/process" },
   { label: "Sustainability", href: "/sustainability" },
-  { label: "Gallery", href: "/gallery" },
   { label: "FAQ", href: "/faq" },
 ];
 
@@ -143,41 +142,6 @@ export const faqs = [
     answer:
       "You can reach us by phone at +977 71 536039, by mobile, or by email at econepal2023@gmail.com. You can also use the enquiry form on our Contact page.",
   },
-];
-
-export const galleryCategories = [
-  "All",
-  "Factory",
-  "Machinery",
-  "Production Process",
-  "Products",
-  "Recovered Steel",
-  "Team & Workers",
-  "Packaging & Dispatch",
-] as const;
-
-export type GalleryCategory = (typeof galleryCategories)[number];
-
-export const galleryImages: {
-  id: string;
-  category: Exclude<GalleryCategory, "All">;
-  title: string;
-  alt: string;
-}[] = [
-  { id: "g1", category: "Factory", title: "Facility Overview", alt: "Placeholder image of the Eco Nepal Energy facility exterior, pending official photography" },
-  { id: "g2", category: "Factory", title: "Plant Entrance", alt: "Placeholder image of the plant entrance, pending official photography" },
-  { id: "g3", category: "Machinery", title: "Pyrolysis Unit", alt: "Placeholder image of pyrolysis processing machinery, pending official photography" },
-  { id: "g4", category: "Machinery", title: "Processing Equipment", alt: "Placeholder image of industrial processing equipment, pending official photography" },
-  { id: "g5", category: "Production Process", title: "Material Preparation", alt: "Placeholder image of material preparation stage, pending official photography" },
-  { id: "g6", category: "Production Process", title: "Processing Line", alt: "Placeholder image of the processing line in operation, pending official photography" },
-  { id: "g7", category: "Products", title: "Pyrolysis Oil Storage", alt: "Placeholder image of pyrolysis oil storage containers, pending official photography" },
-  { id: "g8", category: "Products", title: "Fuel Char Output", alt: "Placeholder image of recovered fuel char material, pending official photography" },
-  { id: "g9", category: "Recovered Steel", title: "Steel Wire Bales", alt: "Placeholder image of recovered steel wire bales, pending official photography" },
-  { id: "g10", category: "Recovered Steel", title: "Steel Recovery Area", alt: "Placeholder image of the steel recovery area, pending official photography" },
-  { id: "g11", category: "Team & Workers", title: "Operations Team", alt: "Placeholder image of the operations team at work, pending official photography" },
-  { id: "g12", category: "Team & Workers", title: "Plant Personnel", alt: "Placeholder image of plant personnel, pending official photography" },
-  { id: "g13", category: "Packaging & Dispatch", title: "Loading Bay", alt: "Placeholder image of the loading and dispatch bay, pending official photography" },
-  { id: "g14", category: "Packaging & Dispatch", title: "Dispatch Preparation", alt: "Placeholder image of products prepared for dispatch, pending official photography" },
 ];
 
 export const coreValues = [

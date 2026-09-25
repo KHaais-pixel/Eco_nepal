@@ -44,7 +44,6 @@ export default async function Footer() {
             <Link href="/about" className="hover:text-cream">About</Link>
             <Link href="/process" className="hover:text-cream">Process</Link>
             <Link href="/sustainability" className="hover:text-cream">Sustainability</Link>
-            <Link href="/gallery" className="hover:text-cream">Gallery</Link>
             <Link href="/faq" className="hover:text-cream">FAQ</Link>
             <Link href="/contact" className="hover:text-cream">Contact</Link>
           </div>

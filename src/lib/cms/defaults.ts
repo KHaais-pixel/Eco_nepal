@@ -3,7 +3,6 @@ import {
   fuelCharApplications,
   fuelCharSections,
   fuelCharSpecs,
-  galleryImages,
   homeProducts,
   pyrolysisOilApplications,
   pyrolysisOilSections,
@@ -82,5 +81,4 @@ export const DEFAULT_CONTENT: SiteContent = {
       sections: recoveredSteelSections.map((s) => ({ ...s, items: [...s.items] })),
     },
   ],
-  gallery: galleryImages.map((g) => ({ ...g, image: null })),
 };

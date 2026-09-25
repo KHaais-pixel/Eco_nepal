@@ -8,7 +8,7 @@ import { verifyPassword } from "@/lib/auth/password";
 import { clearRateLimit, rateLimit } from "@/lib/auth/rate-limit";
 import { createSession, deleteSession, isAuthConfigured } from "@/lib/auth/session";
 import { deleteEnquiry, setEnquiryStatus, updateContent } from "@/lib/cms/store";
-import { ENQUIRY_STATUSES, GALLERY_CATEGORIES, type EnquiryStatus, type GalleryCategory } from "@/lib/cms/types";
+import { ENQUIRY_STATUSES, type EnquiryStatus } from "@/lib/cms/types";
 import { deleteUpload, saveUpload, UploadError } from "@/lib/cms/uploads";
 
 export type ActionState = { status: "idle" | "success" | "error"; message?: string };
@@ -199,80 +199,6 @@ export async function saveProduct(_prev: ActionState, form: FormData): Promise<A
     refreshSite();
     return ok(`${name} saved.`);
   });
-}
-
-// ---- gallery ------------------------------------------------------------------------
-
-function category(form: FormData): GalleryCategory | null {
-  const value = text(form, "category", 60);
-  return (GALLERY_CATEGORIES as readonly string[]).includes(value) ? (value as GalleryCategory) : null;
-}
-
-export async function addGalleryItem(_prev: ActionState, form: FormData): Promise<ActionState> {
-  return guarded(async () => {
-    const image = file(form, "image");
-    const title = text(form, "title", 120);
-    const cat = category(form);
-    if (!image) return fail("Choose an image to upload.");
-    if (!title) return fail("Give the image a title.");
-    if (!cat) return fail("Choose a category.");
-
-    const url = await saveUpload(image);
-    await updateContent((c) => {
-      c.gallery.unshift({
-        id: crypto.randomUUID(),
-        title,
-        category: cat,
-        alt: text(form, "alt", 200) || title,
-        image: url,
-      });
-    });
-    refreshSite();
-    return ok(`“${title}” added to the gallery.`);
-  });
-}
-
-export async function updateGalleryItem(_prev: ActionState, form: FormData): Promise<ActionState> {
-  return guarded(async () => {
-    const id = text(form, "id", 60);
-    const title = text(form, "title", 120);
-    const cat = category(form);
-    if (!title) return fail("Give the image a title.");
-    if (!cat) return fail("Choose a category.");
-
-    const replacement = file(form, "image");
-    const uploaded = replacement ? await saveUpload(replacement) : null;
-    const result = { found: false, previousImage: null as string | null };
-    await updateContent((c) => {
-      const item = c.gallery.find((g) => g.id === id);
-      if (!item) return;
-      result.found = true;
-      result.previousImage = uploaded ? item.image : null;
-      item.title = title;
-      item.category = cat;
-      item.alt = text(form, "alt", 200) || title;
-      if (uploaded) item.image = uploaded;
-    });
-    if (!result.found) {
-      await deleteUpload(uploaded);
-      return fail("That gallery item no longer exists.");
-    }
-    await deleteUpload(result.previousImage);
-    refreshSite();
-    return ok(`“${title}” saved.`);
-  });
-}
-
-export async function deleteGalleryItem(form: FormData) {
-  await verifyAdmin();
-  const id = text(form, "id", 60);
-  const removed = { image: null as string | null };
-  await updateContent((c) => {
-    removed.image = c.gallery.find((g) => g.id === id)?.image ?? null;
-    c.gallery = c.gallery.filter((g) => g.id !== id);
-  });
-  await deleteUpload(removed.image);
-  refreshSite();
 }
 
 // ---- enquiries --------------------------------------------------------------------

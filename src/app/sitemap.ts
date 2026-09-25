@@ -12,7 +12,6 @@ const routes = [
   "/lab-reports",
   "/process",
   "/sustainability",
-  "/gallery",
   "/faq",
   "/contact",
 ];

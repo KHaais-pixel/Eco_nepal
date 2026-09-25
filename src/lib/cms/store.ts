@@ -51,7 +51,6 @@ function withDefaults(saved: Partial<SiteContent> | null): SiteContent {
     products: DEFAULT_CONTENT.products.map(
       (def) => ({ ...def, ...saved.products?.find((p) => p.slug === def.slug) })
     ),
-    gallery: saved.gallery ?? structuredClone(DEFAULT_CONTENT.gallery),
   };
 }
 

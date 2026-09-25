@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import EcoRibbon from "@/components/EcoRibbon";
 
 // Public pages are prerendered from the admin-editable content in DATA_DIR.
 // Admin saves refresh them immediately (revalidatePath); this is a safety net
@@ -15,9 +16,13 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       >
         Skip to main content
       </a>
-      <Header />
-      <main id="main-content">{children}</main>
-      <Footer />
+      {/* Relative wrapper so the decorative ribbon spans exactly the page. */}
+      <div className="relative">
+        <Header />
+        <main id="main-content">{children}</main>
+        <Footer />
+        <EcoRibbon />
+      </div>
     </>
   );
 }

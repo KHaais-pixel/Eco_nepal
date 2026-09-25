@@ -13,7 +13,8 @@ gsap.registerPlugin(ScrollTrigger);
 // ---- Tunables ----------------------------------------------------------
 const DESKTOP_QUERY = "(min-width: 768px)";
 const MOBILE_QUERY = "(max-width: 767px)";
-const SCRUB = 0.7; // scrub smoothing (seconds of "catch-up" lag)
+const SCRUB = 0.7; // scrub smoothing (seconds of "catch-up" lag), mouse wheel
+const SCRUB_TOUCH = 0.25; // touch scrolling is already smooth; keep the page under the finger
 const FLIP = 1; // timeline seconds per page turn
 const REST = 0.4; // timeline seconds each spread rests fully open
 const SCROLL_PER_FLIP = 75; // % of viewport height scrolled per page turn
@@ -83,7 +84,7 @@ export default function BrochureFlip({ pages, pdf }: { pages: Page[]; pdf: strin
           start: "top top",
           end: `+=${(stopTimes.length - 1) * SCROLL_PER_FLIP}%`,
           pin: true,
-          scrub: SCRUB,
+          scrub: window.matchMedia("(pointer: coarse)").matches ? SCRUB_TOUCH : SCRUB,
           animation: tl,
           anticipatePin: 1,
           invalidateOnRefresh: true,

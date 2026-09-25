@@ -16,7 +16,8 @@ gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, ScrambleTextPlugin);
 const DESKTOP_QUERY = "(min-width: 1024px)";
 const MOBILE_QUERY = "(max-width: 1023px)";
 const PIN_END = "+=250%"; // total desktop scroll length while pinned
-const SCRUB = 1; // scrub smoothing (seconds of "catch-up" lag)
+const SCRUB = 1; // scrub smoothing (seconds of "catch-up" lag), desktop pin
+const SCRUB_TOUCH = 0.3; // phone card reveals: light smoothing
 const CARD_STAGGER = 0.15; // seconds between each card's land animation
 const HOLD_PAD = 0.6; // seconds of idle timeline at the end (~10% hold)
 const GLOW_COLOR = "#F28C28";
@@ -251,7 +252,10 @@ export default function ProductsScrub({ products: homeProducts }: { products: Ho
         gsap.set(headingRef.current, { opacity: 0 });
         gsap.to(headingRef.current, { opacity: 1, duration: 0.6, ease: "power2.out" });
 
-        gsap.set(imageWrapRefs.current, { clipPath: "inset(45% 0 45% 0 round 16px)" });
+        // Phones: transform/opacity only (GPU-composited, no per-frame
+        // repaint of the large images), and light smoothing so the cards
+        // stay under the finger instead of trailing behind it.
+        gsap.set(imageWrapRefs.current, { opacity: 0, y: 48, scale: 0.94 });
         gsap.set(imageInnerRefs.current, { scale: 1.2 });
         gsap.set(titleRefs.current, { opacity: 0, y: 16 });
         gsap.set(tagRefs.current, { opacity: 0 });
@@ -262,9 +266,9 @@ export default function ProductsScrub({ products: homeProducts }: { products: Ho
           const img = imageInnerRefs.current[i];
           const title = titleRefs.current[i];
           const tag = tagRefs.current[i];
-          const scrollTrigger = { trigger: card, start: "top 85%", end: "top 45%", scrub: SCRUB };
+          const scrollTrigger = { trigger: card, start: "top 90%", end: "top 55%", scrub: SCRUB_TOUCH };
 
-          gsap.to(wrap, { clipPath: "inset(0% 0 0% 0 round 16px)", ease: "none", scrollTrigger });
+          gsap.to(wrap, { opacity: 1, y: 0, scale: 1, ease: "none", scrollTrigger });
           gsap.to(img, { scale: 1, ease: "none", scrollTrigger: { ...scrollTrigger } });
           gsap.to([title, tag], { opacity: 1, y: 0, ease: "none", scrollTrigger: { ...scrollTrigger } });
         });

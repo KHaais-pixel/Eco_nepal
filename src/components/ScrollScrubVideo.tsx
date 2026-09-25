@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 type ScrollScrubVideoProps = {
   src: string;
   poster: string;
   alt: string;
-  /** 0–1 scroll progress through the section this video should scrub across. */
-  progress: number;
+  /** 0–1 scroll progress through the section this video should scrub across (read every frame). */
+  progressRef: RefObject<number>;
   className?: string;
 };
 
@@ -23,21 +23,14 @@ export default function ScrollScrubVideo({
   src,
   poster,
   alt,
-  progress,
+  progressRef,
   className = "",
 }: ScrollScrubVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const progressRef = useRef(progress);
   const durationRef = useRef(0);
   const rafRef = useRef<number | undefined>(undefined);
   const [ready, setReady] = useState(false);
   const reducedMotion = useReducedMotion();
-
-  // Mirror the latest progress into a ref (outside of render) so the rAF
-  // loop below can read it without depending on React's render cycle.
-  useLayoutEffect(() => {
-    progressRef.current = progress;
-  }, [progress]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -59,6 +52,21 @@ export default function ScrollScrubVideo({
     if (!video) return;
 
     let lastTime = -1;
+    let running = false;
+
+    // Only run the per-frame loop while the video is on (or near) screen.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !running) {
+          running = true;
+          rafRef.current = requestAnimationFrame(tick);
+        } else if (!entry.isIntersecting && running) {
+          running = false;
+          if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        }
+      },
+      { rootMargin: "200px 0px" }
+    );
 
     const tick = () => {
       const duration = durationRef.current;
@@ -72,14 +80,16 @@ export default function ScrollScrubVideo({
           lastTime = target;
         }
       }
-      rafRef.current = requestAnimationFrame(tick);
+      if (running) rafRef.current = requestAnimationFrame(tick);
     };
-    rafRef.current = requestAnimationFrame(tick);
+    io.observe(video);
 
     return () => {
+      io.disconnect();
+      running = false;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [ready, reducedMotion]);
+  }, [ready, reducedMotion, progressRef]);
 
   // Reduced-motion fallback: land on a single representative frame instead
   // of scrubbing, and never autoplay.

@@ -12,14 +12,16 @@ const MAX_CROSS_H = 300; // max vertical span of a side-to-side crossing
 const MIN_GAP = 96; // only cross where sections leave this much empty space
 const MIN_CROSS_GAP = 760; // min px between crossings
 const LEAF_EVERY = 480; // px of ribbon length between leaves
-const CHUNK_PTS = 110; // points per path segment (~1.3k px of ribbon)
+const CHUNK_PTS = 100; // points per piece (~1.2k px); pieces are painted once, so bigger = fewer layers
 const TIP_AT = 0.62; // the growing tip sits this far down the viewport
-const GROW = 0.55; // seconds the tip takes to catch up with the scroll
+const GROW = 0.55; // seconds the tip takes to catch up with the scroll (mouse)
+const GROW_TOUCH = 0.25; // touch scrolling is already smooth: follow the finger closely
 const CONTENT_MAX = 1320; // matches the site's max-w-[1320px] containers
 
 type Pt = { x: number; y: number };
 type Leaf = { len: number; x: number; y: number; angle: number; size: number; fill: string };
-type Chunk = { d: string; start: number; length: number };
+/** A cropped piece of the ribbon, painted once in its own small SVG at (x, y). */
+type Chunk = { d: string; start: number; length: number; x: number; y: number; w: number; h: number };
 type Geometry = { w: number; h: number; chunks: Chunk[]; sw: number; leaves: Leaf[] };
 
 const LEAF_FILLS = ["#2f7a4d", "#6fae45", "#1f4d33", "#8cc152"];
@@ -146,16 +148,23 @@ function layout(wrapper: HTMLElement) {
     leaves.push({ len, x, y: ly, angle: angle + turn, size: leafSize, fill: LEAF_FILLS[k % 4] });
   }
 
-  // Split into short segments that share an end point, so a scroll only
-  // repaints the one segment that is currently growing, not the whole page.
+  // Split into short pieces, each painted once in its own tightly cropped
+  // SVG. Growth is a reveal from the top done purely with GPU transforms
+  // (see render), so scrolling never repaints the ribbon. Neighbours overlap
+  // by one point with flat ends, so joins are invisible.
+  const bleed = sw + 4;
   const chunks: Chunk[] = [];
   for (let i = 0; i < pts.length - 1; i += CHUNK_PTS) {
-    const end = Math.min(i + CHUNK_PTS, pts.length - 1);
-    const d = pts
-      .slice(i, end + 1)
-      .map((p, k) => `${k ? "L" : "M"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
-      .join("");
-    chunks.push({ d, start: lens[i], length: lens[end] - lens[i] });
+    const end = Math.min(i + CHUNK_PTS + 1, pts.length - 1);
+    const seg = pts.slice(i, end + 1);
+    const x0 = Math.floor(Math.min(...seg.map((p) => p.x)) - bleed);
+    const y0 = Math.floor(Math.min(...seg.map((p) => p.y)) - bleed);
+    const x1 = Math.ceil(Math.max(...seg.map((p) => p.x)) + bleed);
+    const y1 = Math.ceil(Math.max(...seg.map((p) => p.y)) + bleed);
+    const d = seg.map((p, k) => `${k ? "L" : "M"}${(p.x - x0).toFixed(1)} ${(p.y - y0).toFixed(1)}`).join("");
+    const start = lens[i];
+    const length = lens[end] - lens[i];
+    chunks.push({ d, start, length, x: x0, y: y0, w: x1 - x0, h: y1 - y0 });
   }
   return { geometry: { w, h, chunks, sw, leaves }, pts, lens };
 }
@@ -198,9 +207,10 @@ function lengthAtY(pts: Pt[], lens: number[], targetY: number) {
  */
 export default function EcoRibbon() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const chunkRefs = useRef<(SVGPathElement | null)[][]>([[], [], []]);
-  const tipRef = useRef<SVGGElement>(null);
-  const leafRefs = useRef<(SVGGElement | null)[]>([]);
+  const clipRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const innerRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const tipRef = useRef<HTMLDivElement>(null);
+  const leafRefs = useRef<(HTMLDivElement | null)[]>([]);
   const dataRef = useRef<{ pts: Pt[]; lens: number[] }>({ pts: [], lens: [] });
   // Drawn length survives re-layouts (late images, resizes) so the ribbon
   // doesn't regrow from the top; a new page starts it from zero again.
@@ -246,35 +256,43 @@ export default function EcoRibbon() {
     const { pts, lens } = dataRef.current;
     const total = lens.at(-1) ?? 0;
     const chunks = geo.chunks;
-    const layers = chunkRefs.current.map((refs) => refs.slice(0, chunks.length));
-    const drawn = chunks.map(() => -1);
+    const clips = clipRefs.current.slice(0, chunks.length);
+    const inners = innerRefs.current.slice(0, chunks.length);
+    const shownPx = chunks.map(() => -1);
     const leaves = leafRefs.current.slice(0, geo.leaves.length);
     const shown = geo.leaves.map(() => false);
     const state = { len: Math.min(lenRef.current, total) };
 
-    layers.forEach((refs) =>
-      refs.forEach((p, c) => p && (p.style.strokeDasharray = `${chunks[c].length} ${chunks[c].length}`))
-    );
+    // Reveal a piece down to page-y `tipY`: the clip box slides up by the
+    // hidden amount while its content slides back down by the same amount,
+    // so the drawing stays put and only the visible window moves. Both are
+    // transforms on composited layers: no layout, no paint.
+    const reveal = (c: number, tipY: number) => {
+      const chunk = chunks[c];
+      const px = Math.round(clamp(tipY - chunk.y, 0, chunk.h));
+      if (px === shownPx[c]) return; // untouched pieces cost nothing
+      shownPx[c] = px;
+      const clip = clips[c];
+      const inner = inners[c];
+      if (!clip || !inner) return;
+      const hidden = chunk.h - px;
+      const active = px > 0 && px < chunk.h;
+      clip.style.visibility = px > 0 ? "visible" : "hidden";
+      clip.style.transform = hidden ? `translate3d(0, ${-hidden}px, 0)` : "";
+      inner.style.transform = hidden ? `translate3d(0, ${hidden}px, 0)` : "";
+      // Only the growing piece is kept on its own GPU layers.
+      clip.style.willChange = inner.style.willChange = active ? "transform" : "auto";
+    };
 
     const render = () => {
       const len = state.len;
       lenRef.current = len;
-      chunks.forEach((chunk, c) => {
-        const amount = Math.round(clamp(len - chunk.start, 0, chunk.length) * 2) / 2;
-        if (amount === drawn[c]) return; // untouched segments cost nothing
-        drawn[c] = amount;
-        layers.forEach((refs) => {
-          const p = refs[c];
-          if (!p) return;
-          // Hidden when empty: a zero-length dash would still paint a round cap.
-          p.style.visibility = amount > 0 ? "visible" : "hidden";
-          p.style.strokeDashoffset = `${chunk.length - amount}`;
-        });
-      });
+      const { x, y, angle } = pointAt(pts, lens, Math.max(len, 1));
+      const tipY = len >= total - 0.5 ? Infinity : y;
+      for (let c = 0; c < chunks.length; c++) reveal(c, tipY);
       const tip = tipRef.current;
       if (tip) {
-        const { x, y, angle } = pointAt(pts, lens, Math.max(len, 1));
-        tip.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${angle.toFixed(1)})`);
+        tip.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotate(${angle.toFixed(1)}deg)`;
         tip.style.opacity = len > 2 && len < total - 2 ? "1" : "0";
       }
       geo.leaves.forEach((leaf, i) => {
@@ -290,7 +308,7 @@ export default function EcoRibbon() {
       });
     };
 
-    gsap.set(leaves, { scale: 0, transformOrigin: "0% 50%" });
+    gsap.set(leaves, { scale: 0, transformOrigin: "0% 50%", force3D: true });
 
     if (reducedMotion) {
       state.len = total;
@@ -307,7 +325,8 @@ export default function EcoRibbon() {
 
     // Start the ribbon from the top of the page and grow it into place.
     render();
-    const tween = gsap.quickTo(state, "len", { duration: GROW, ease: "power3.out", onUpdate: render });
+    const touch = window.matchMedia("(pointer: coarse)").matches;
+    const tween = gsap.quickTo(state, "len", { duration: touch ? GROW_TOUCH : GROW, ease: "power3.out", onUpdate: render });
     tween(target());
     const onScroll = () => tween(target());
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -320,63 +339,88 @@ export default function EcoRibbon() {
 
   return (
     <div ref={rootRef} aria-hidden="true" className="pointer-events-none absolute inset-0 z-30 overflow-hidden">
-      {geo && (
-        <svg width={geo.w} height={geo.h} viewBox={`0 0 ${geo.w} ${geo.h}`} className="absolute left-0 top-0" fill="none">
-          <defs>
-            <linearGradient id="eco-ribbon" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1600" spreadMethod="reflect">
-              <stop offset="0" stopColor="#1f4d33" />
-              <stop offset="0.4" stopColor="#2f7a4d" />
-              <stop offset="0.75" stopColor="#6fae45" />
-              <stop offset="1" stopColor="#9ccf5a" />
-            </linearGradient>
-          </defs>
-          {/* Dark edge, ribbon body, and a thin highlight for a satin sheen.
-              All opaque, so the overlapping round caps where segments meet
-              never show as seams. */}
-          {[
-            { stroke: "#1f4d33", width: geo.sw + 3 },
-            { stroke: "url(#eco-ribbon)", width: geo.sw },
-            { stroke: "#d9ecb4", width: Math.max(1.2, geo.sw * 0.18) },
-          ].map((layer, l) => (
-            <g key={l} stroke={layer.stroke} strokeWidth={layer.width} strokeLinecap="round" strokeLinejoin="round">
-              {geo.chunks.map((chunk, c) => (
-                <path
-                  key={c}
-                  ref={(el) => {
-                    chunkRefs.current[l][c] = el;
-                  }}
-                  d={chunk.d}
-                  style={{ visibility: "hidden" }}
-                />
-              ))}
-            </g>
-          ))}
+      {geo &&
+        geo.chunks.map((chunk, c) => (
+          <div
+            key={c}
+            ref={(el) => {
+              clipRefs.current[c] = el;
+            }}
+            className="absolute overflow-hidden"
+            style={{ left: chunk.x, top: chunk.y, width: chunk.w, height: chunk.h, visibility: "hidden" }}
+          >
+            <div
+              ref={(el) => {
+                innerRefs.current[c] = el;
+              }}
+            >
+              <svg width={chunk.w} height={chunk.h} viewBox={`0 0 ${chunk.w} ${chunk.h}`} className="block" fill="none">
+                <defs>
+                  {/* Page-anchored gradient, so colour flows continuously across pieces. */}
+                  <linearGradient
+                    id={`eco-ribbon-${c}`}
+                    gradientUnits="userSpaceOnUse"
+                    x1="0"
+                    y1={-chunk.y}
+                    x2="0"
+                    y2={1600 - chunk.y}
+                    spreadMethod="reflect"
+                  >
+                    <stop offset="0" stopColor="#1f4d33" />
+                    <stop offset="0.4" stopColor="#2f7a4d" />
+                    <stop offset="0.75" stopColor="#6fae45" />
+                    <stop offset="1" stopColor="#9ccf5a" />
+                  </linearGradient>
+                </defs>
+                {/* Dark edge, ribbon body, and a thin highlight for a satin sheen. */}
+                <path d={chunk.d} stroke="#1f4d33" strokeWidth={geo.sw + 3} strokeLinejoin="round" />
+                <path d={chunk.d} stroke={`url(#eco-ribbon-${c})`} strokeWidth={geo.sw} strokeLinejoin="round" />
+                <path d={chunk.d} stroke="#d9ecb4" strokeWidth={Math.max(1.2, geo.sw * 0.18)} strokeLinejoin="round" />
+              </svg>
+            </div>
+          </div>
+        ))}
 
-          {geo.leaves.map((leaf, i) => (
-            <g key={i} transform={`translate(${leaf.x.toFixed(1)} ${leaf.y.toFixed(1)}) rotate(${leaf.angle.toFixed(1)})`}>
-              <g
-                ref={(el) => {
-                  leafRefs.current[i] = el;
-                }}
-                transform="scale(0)"
+      {/* Leaves: tiny GPU layers that pop in with a transform (no repaint). */}
+      {geo &&
+        geo.leaves.map((leaf, i) => (
+          <div
+            key={i}
+            className="absolute left-0 top-0 h-0 w-0"
+            style={{ transform: `translate3d(${leaf.x.toFixed(1)}px, ${leaf.y.toFixed(1)}px, 0) rotate(${leaf.angle.toFixed(1)}deg)` }}
+          >
+            <div
+              ref={(el) => {
+                leafRefs.current[i] = el;
+              }}
+              className="absolute left-0 top-0 will-change-transform"
+              style={{ transform: "scale(0)" }}
+            >
+              <svg
+                width={24 * leaf.size}
+                height={20 * leaf.size}
+                viewBox="0 -10 24 20"
+                className="absolute left-0 block"
+                style={{ top: -10 * leaf.size }}
               >
-                <g transform={`scale(${leaf.size})`}>
-                  <path d={LEAF_PATH} fill={leaf.fill} />
-                  <path d="M2 0H20" stroke="rgba(245,244,238,0.55)" strokeWidth="1.2" strokeLinecap="round" />
-                </g>
-              </g>
-            </g>
-          ))}
+                <path d={LEAF_PATH} fill={leaf.fill} />
+                <path d="M2 0H20" stroke="rgba(245,244,238,0.55)" strokeWidth="1.2" strokeLinecap="round" />
+              </svg>
+            </div>
+          </div>
+        ))}
 
-          {/* Growing tip: a small sprout that leads the ribbon. */}
-          <g ref={tipRef} style={{ opacity: 0 }}>
+      {/* Growing tip: a small sprout on its own GPU layer, moved by transform. */}
+      {geo && (
+        <div ref={tipRef} className="absolute left-0 top-0 h-0 w-0 opacity-0 will-change-transform">
+          <svg width="40" height="40" viewBox="-20 -20 40 40" className="absolute -left-5 -top-5 overflow-visible" fill="none">
             <g transform={`scale(${clamp(geo.sw / 11, 0.55, 1.15)})`}>
               <path d={LEAF_PATH} transform="rotate(-38) scale(0.8)" fill="#6fae45" />
               <path d={LEAF_PATH} transform="rotate(38) scale(0.8)" fill="#2f7a4d" />
               <circle r="5" fill="#c9e27a" stroke="#1f4d33" strokeWidth="1.5" />
             </g>
-          </g>
-        </svg>
+          </svg>
+        </div>
       )}
     </div>
   );

@@ -4,8 +4,26 @@
     {
       "name": "eco-nepal-energy",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--", "--port", "3417"],
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3417"
+      ],
       "port": 3417
+    },
+    {
+      "name": "eco-nepal-energy-prod",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "start",
+        "--",
+        "--port",
+        "3500"
+      ],
+      "port": 3500
     }
   ]
 }

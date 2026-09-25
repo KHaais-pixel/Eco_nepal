@@ -8,7 +8,7 @@ import Eyebrow from "./Eyebrow";
 
 export default function HomeStoryScroll() {
   const ref = useRef<HTMLElement>(null);
-  const { progress, activeIndex } = useScrollStoryProgress(ref, storyItems.length);
+  const { progressRef, activeIndex } = useScrollStoryProgress(ref, storyItems.length);
   const active = storyItems[activeIndex];
 
   return (
@@ -23,7 +23,7 @@ export default function HomeStoryScroll() {
             src="/story-scrub/tyre-scrub.mp4"
             poster="/story-scrub/tyre-scrub-poster.jpg"
             alt="Waste tyre recycling process, scrubbing through collection, pyrolysis oil, fuel char, and recovered steel"
-            progress={progress}
+            progressRef={progressRef}
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0" />
           <div className="pointer-events-none absolute inset-x-6 bottom-6 flex items-end justify-between gap-4">

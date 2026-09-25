@@ -23,7 +23,7 @@ export default function Header() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-ink/[0.08] bg-cream/[0.82] backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-ink/[0.08] bg-cream/[0.96] lg:bg-cream/[0.82] lg:backdrop-blur-md">
       <div className="mx-auto flex h-[72px] w-full max-w-[1320px] items-center justify-between gap-6 px-5 sm:px-8">
         <Link href="/" className="flex shrink-0 items-center gap-3" aria-label="Eco Nepal Energy home">
           <Image src="/brand/logo-mark.png" alt="" width={240} height={254} priority className="h-[46px] w-auto shrink-0" />

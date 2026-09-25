@@ -1,18 +1,21 @@
 "use client";
 
-import { RefObject, useEffect, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 
 /**
  * Tracks 0–1 scroll progress through a tall container (typically several
  * viewport-heights, with a sticky inner panel), and the active index into
  * `count` evenly-sized steps. Used to drive sticky "story" sections where a
  * numbered list highlights as the user scrolls past each step.
+ *
+ * Progress lives in a ref (read by per-frame consumers such as a scrubbed
+ * video) so scrolling never re-renders React; only a change of step does.
  */
 export function useScrollStoryProgress(
   ref: RefObject<HTMLElement | null>,
   count: number
 ) {
-  const [progress, setProgress] = useState(0);
+  const progressRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -26,8 +29,8 @@ export function useScrollStoryProgress(
       const rect = el.getBoundingClientRect();
       const vh = window.innerHeight;
       const p = Math.min(1, Math.max(0, -rect.top / Math.max(1, rect.height - vh)));
-      setProgress(p);
-      setActiveIndex(Math.min(count - 1, Math.floor(p * count)));
+      progressRef.current = p;
+      setActiveIndex(Math.min(count - 1, Math.floor(p * count))); // bails out if unchanged
     };
 
     const onScroll = () => {
@@ -46,5 +49,5 @@ export function useScrollStoryProgress(
     };
   }, [ref, count]);
 
-  return { progress, activeIndex };
+  return { progressRef, activeIndex };
 }

@@ -7,7 +7,8 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 // ---- Tunables --------------------------------------------------------------
 const VH_PER_STEP = 90; // scroll length per step while the plant is on screen
-const SMOOTH = 0.35; // seconds the scene takes to catch up with the scroll
+const SMOOTH = 0.35; // seconds the scene takes to catch up with the scroll (mouse wheel)
+const SMOOTH_TOUCH = 0.12; // touch scrolling is already smooth; extra lag feels rubbery
 const N = processSteps.length; // 7
 
 const SHORT = ["Collection", "Preparation", "Pyrolysis", "Oil Recovery", "Solid Recovery", "Steel Recovery", "Quality & Dispatch"];
@@ -324,7 +325,8 @@ export default function PlantScrub() {
       window.addEventListener("scroll", onScroll, { passive: true });
       return () => window.removeEventListener("scroll", onScroll);
     }
-    const to = gsap.quickTo(state, "t", { duration: SMOOTH, ease: "power2.out", onUpdate: () => render(state.t) });
+    const touch = window.matchMedia("(pointer: coarse)").matches;
+    const to = gsap.quickTo(state, "t", { duration: touch ? SMOOTH_TOUCH : SMOOTH, ease: "power2.out", onUpdate: () => render(state.t) });
     const onScroll = () => to(target());
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);

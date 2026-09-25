@@ -35,6 +35,11 @@ export const productLinks = [
     href: "/products/recovered-steel",
     blurb: "Steel wire scrap recovered from end-of-life tyres",
   },
+  {
+    label: "Lab Reports",
+    href: "/lab-reports",
+    blurb: "ASTM test results and fuel oil comparisons",
+  },
 ];
 
 export const navItems: NavItem[] = [
@@ -433,3 +438,43 @@ export const steelApplications = [
   "Scrap metal recycling",
   "Furnace charging",
 ];
+
+// Company brochure, rendered page-by-page from the Illustrator PDF
+// (public/brochure). Alt text summarises each page for screen readers.
+export const brochure = {
+  pdf: "/brochure/econepal-brochure.pdf",
+  pages: [
+    {
+      src: "/brochure/page-1.jpg",
+      alt: "Brochure cover: Econepal Energy Industries, “Join the journey to a greener future with tyre pyrolysis oil”, with photos of fuel being poured, an industrial plant and a filling station, and the company’s contact details.",
+    },
+    {
+      src: "/brochure/page-2.jpg",
+      alt: "About us and products: an introduction to Econepal Energy Industries, a pioneer of Nepal’s pyrolysis industry, and its three products, Tyre Pyrolysis Oil (TPO), Black Carbon Powder and Burned Steel Wire.",
+    },
+    {
+      src: "/brochure/page-3.jpg",
+      alt: "Photo collage of industrial users: boilers, machinery, control panels, brick production, pyrolysis oil and road paving.",
+    },
+    {
+      src: "/brochure/page-4.jpg",
+      alt: "“Hope on the ride to a better world with tyre pyrolysis oil”, with photos of road paving, biscuit production and a filling station, and the company’s contact details.",
+    },
+    {
+      src: "/brochure/page-5.jpg",
+      alt: "Tyre Pyrolysis Oil (TPO): what it is, the industries it fuels, from asphalt plants to power plants, and its advantages over furnace oil and light diesel oil.",
+    },
+    {
+      src: "/brochure/page-6.jpg",
+      alt: "Comparison table of tyre pyrolysis oil, furnace oil and light diesel oil across eight ASTM test parameters, followed by the company’s contact details.",
+    },
+    {
+      src: "/brochure/page-7.jpg",
+      alt: "Black Carbon Powder (Black Cat Carbon): description, benefits such as high calorific value and low moisture, and the industries that use carbon black.",
+    },
+    {
+      src: "/brochure/page-8.jpg",
+      alt: "Back cover: fuel char (pyrolysis carbon powder) specification table and the company’s contact details.",
+    },
+  ],
+};

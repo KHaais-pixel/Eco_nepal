@@ -7,8 +7,9 @@ import HeroVideo from "@/components/HeroVideo";
 import RevealOnScroll from "@/components/RevealOnScroll";
 import HomeStoryScroll from "@/components/HomeStoryScroll";
 import ProductsScrub from "@/components/home/ProductsScrub";
+import BrochureFlip from "@/components/home/BrochureFlip";
 import CTABanner from "@/components/CTABanner";
-import { audiences } from "@/lib/site-data";
+import { audiences, brochure } from "@/lib/site-data";
 import { getProducts } from "@/lib/cms/content";
 
 export const metadata: Metadata = {
@@ -74,6 +75,9 @@ export default async function HomePage() {
 
       {/* What we produce — scroll-scrubbed tyre-to-products animation */}
       <ProductsScrub products={products} />
+
+      {/* Company brochure — scroll-driven 3D page turns */}
+      <BrochureFlip pages={brochure.pages} pdf={brochure.pdf} />
 
       {/* Work with us */}
       <section className="bg-deep text-cream">

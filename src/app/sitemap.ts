@@ -9,6 +9,7 @@ const routes = [
   "/products/pyrolysis-oil",
   "/products/fuel-char",
   "/products/recovered-steel",
+  "/lab-reports",
   "/process",
   "/sustainability",
   "/gallery",

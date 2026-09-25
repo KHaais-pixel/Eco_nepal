@@ -106,7 +106,7 @@ export default function Header() {
 
       <div
         className={`overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out lg:hidden ${
-          mobileOpen ? "max-h-[32rem] opacity-100" : "max-h-0 opacity-0"
+          mobileOpen ? "max-h-[40rem] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         <nav className="space-y-1 border-t border-ink/[0.08] bg-cream px-5 py-4" aria-label="Mobile">

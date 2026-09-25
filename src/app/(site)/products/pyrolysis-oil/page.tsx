@@ -6,6 +6,7 @@ import RevealOnScroll from "@/components/RevealOnScroll";
 import Button from "@/components/Button";
 import { SpecTable, FuelComparisonTable } from "@/components/SpecTable";
 import CTABanner from "@/components/CTABanner";
+import ProductSections from "@/components/ProductSections";
 import { getProduct } from "@/lib/cms/content";
 
 export const metadata: Metadata = {
@@ -49,6 +50,8 @@ export default async function PyrolysisOilPage() {
           />
         </RevealOnScroll>
       </section>
+
+      <ProductSections sections={product.sections} />
 
       <section className="border-y border-ink/[0.08] bg-stone">
         <Container className="py-[clamp(80px,10vw,130px)]">

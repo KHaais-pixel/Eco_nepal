@@ -1,11 +1,14 @@
 import {
   company,
   fuelCharApplications,
+  fuelCharSections,
   fuelCharSpecs,
   galleryImages,
   homeProducts,
   pyrolysisOilApplications,
+  pyrolysisOilSections,
   pyrolysisOilSpecs,
+  recoveredSteelSections,
   steelApplications,
   steelSpecs,
 } from "@/lib/site-data";
@@ -48,6 +51,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       imageAlt: homeProducts[0].imageAlt,
       applications: [...pyrolysisOilApplications],
       specs: pyrolysisOilSpecs.map((s) => ({ ...s })),
+      sections: pyrolysisOilSections.map((s) => ({ ...s, items: [...s.items] })),
     },
     {
       slug: "fuel-char",
@@ -61,6 +65,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       imageAlt: homeProducts[1].imageAlt,
       applications: [...fuelCharApplications],
       specs: fuelCharSpecs.map((s) => ({ ...s })),
+      sections: fuelCharSections.map((s) => ({ ...s, items: [...s.items] })),
     },
     {
       slug: "recovered-steel",
@@ -74,6 +79,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       imageAlt: homeProducts[2].imageAlt,
       applications: [...steelApplications],
       specs: steelSpecs.map((s) => ({ ...s })),
+      sections: recoveredSteelSections.map((s) => ({ ...s, items: [...s.items] })),
     },
   ],
   gallery: galleryImages.map((g) => ({ ...g, image: null })),

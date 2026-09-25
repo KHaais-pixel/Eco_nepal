@@ -275,12 +275,101 @@ export const fuelCharSpecs = [
   { property: "Color / Appearance", unit: "–", value: "Black" },
 ];
 
+// Recovered steel scrap specification (econepalenergy.com.np/steel).
 export const steelSpecs = [
-  { property: "Scrap Category", value: "HMS 1 under stated ISS codes 200 and 252 (subject to verification)" },
-  { property: "Maximum Bale Size", value: "30 × 24 inches" },
-  { property: "Maximum Bale Weight", value: "60 kg" },
-  { property: "Bale Density", value: "Prepared for economical furnace charging" },
-  { property: "Reported Test Yield", value: "Minimum 84% in the stated test" },
+  { property: "Scrap Standard", value: "HMS 1 under ISS codes 200 and 252" },
+  { property: "Bale Size", value: "Not exceeding 30 × 24 inches" },
+  { property: "Bale Weight", value: "Not exceeding 60 kg" },
+  { property: "Bale Density", value: "Optimised for economical charging and efficient furnace operation" },
+  { property: "Melt Yield", value: "Minimum 84% (melted in a 5 kg arc furnace)" },
+];
+
+// Product page copy from the old site: /furnance, /carbon and /steel.
+export const pyrolysisOilSections = [
+  {
+    title: "Tyre Pyrolysis Oil (TPO)",
+    body:
+      "We produce Tyre Pyrolysis Oil (TPO), which serves as a significant fuel source for heavy industries like construction, steel, cement and boiler factories, as well as for hotel heating. TPO is comparable to Furnace Oil (FO) and Light Diesel Oil (LDO) commonly found in the market. It can be efficiently utilised to generate heat through direct combustion in boilers or furnaces. Our focus lies on maintaining exceptional purity and quality in our product.",
+    items: [],
+  },
+  {
+    title: "Advantages of tyre pyrolysis in recycling rubber scrap",
+    items: [
+      "100% of waste tyres are recycled. At the end of the recycling process no rubber residue remains.",
+      "No chemicals are used in the recycling process, so it is environmentally friendly.",
+      "There is no soil, water or air pollution at the end of the recycling process.",
+      "Derives energy resources in the form of oil and char from waste tyres.",
+      "Every ton of tyres recycled saves 10 tons of CO₂, a major greenhouse gas.",
+      "Helps reduce pollution by consuming waste tyres and scrap.",
+      "The tyre recycling process can be applied to all rubber-based materials.",
+    ],
+  },
+  {
+    title: "Pyrolysis oil as a fuel in",
+    body:
+      "In terms of specifications, pyrolysis oil is almost equivalent to Light Diesel Oil (LDO), offering up to 25–30% savings compared to LDO.",
+    items: [
+      "Road Construction (Asphalt Plants)",
+      "Biscuit Factories",
+      "Cement Plants",
+      "Steel Factories",
+      "Boilers",
+      "Furnaces",
+      "Ceramic Factories",
+      "Glass Factories",
+      "Brick Factories",
+      "Hot Water Generators",
+      "Hot Air Generators",
+      "Thermic Fluid Heaters",
+      "Power Plants",
+    ],
+  },
+  {
+    title: "Advantages of pyrolysis oil over furnace oil",
+    items: [
+      "Pyrolysis fuel oil has low density and low viscosity, so it does not need to be pre-heated like furnace oil before use, which saves energy costs.",
+      "The calorific value of pyrolysis fuel oil is in the range of 10,400 Cal/g ± 3%, higher than furnace oil.",
+      "Sulphur content is up to 0.9%, whereas in furnace oil it is around 4%, so SOx pollution is lower.",
+      "Ash content and water content are considerably lower than in furnace oil.",
+      "Pyrolysis fuel oil does not need any blending with furnace oil and can be burned directly, even with diesel burners.",
+      "5 to 10% saving against furnace oil.",
+    ],
+  },
+];
+
+export const fuelCharSections = [
+  {
+    title: "Black carbon",
+    body:
+      "Carbon black is used by many industries as a raw material or main ingredient. Its chemical structure strengthens, lengthens endurance and tolerance, and improves colouring.",
+    items: [
+      "Cement Industries",
+      "Steel Industries",
+      "Low-Cost Rubber Products",
+      "Hot Air Generators",
+      "Pet Coke",
+      "As a Substitute for Coal",
+    ],
+  },
+  {
+    title: "Benefits of carbon powder",
+    items: [
+      "High calorific value: equivalent to ‘A’ grade coal imported from South Africa.",
+      "Low moisture content: results in less energy waste.",
+      "Comparable ash content: similar to that of coal.",
+      "Low volatile matter: leads to less smoke.",
+      "High fixed carbon: enhances heat energy generation.",
+    ],
+  },
+];
+
+export const recoveredSteelSections = [
+  {
+    title: "Metal recovery from end-of-life tyres",
+    body:
+      "The recovery of metal, specifically steel wire, from end-of-life tyres results in sorted, homogeneous scrap. On visual inspection the scrap appears as a bundle of long wires, with minimal ash and iron oxide. There is no rubber or fibre contamination, because the furnace temperature reaches 450°C, completely pyrolysing all contaminants. Whenever our material is melted in a 5 kg arc furnace, the yield has consistently been at least 84%.\n\nWhen baled, our scrap meets HMS 1 standards under ISS codes 200 and 252. The bales are prepared for compact loading of the furnace, and this precise preparation ensures that our metal scrap is of the highest quality, providing reliable performance and efficiency in various industrial applications.",
+    items: [],
+  },
 ];
 
 export const steelEnquiryPoints = [

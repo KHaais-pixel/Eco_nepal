@@ -7,6 +7,7 @@ import RevealOnScroll from "@/components/RevealOnScroll";
 import Button from "@/components/Button";
 import SpecList from "@/components/SpecList";
 import CTABanner from "@/components/CTABanner";
+import ProductSections from "@/components/ProductSections";
 import { steelEnquiryPoints } from "@/lib/site-data";
 import { getProduct } from "@/lib/cms/content";
 
@@ -50,6 +51,8 @@ export default async function RecoveredSteelPage() {
           />
         </RevealOnScroll>
       </section>
+
+      <ProductSections sections={product.sections} />
 
       <section className="border-y border-ink/[0.08] bg-stone">
         <Container className="grid grid-cols-1 gap-10 py-[clamp(80px,10vw,130px)] sm:grid-cols-2 sm:gap-24">

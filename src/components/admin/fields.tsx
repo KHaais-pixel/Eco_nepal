@@ -138,3 +138,94 @@ export function SpecsEditor({ initial }: { initial: SpecRow[] }) {
     </div>
   );
 }
+
+type SectionRow = { title: string; body?: string; items: string[] };
+
+/**
+ * Editable product page sections, submitted as sectionTitle[] /
+ * sectionBody[] / sectionItems[] (items one per line).
+ */
+export function SectionsEditor({ initial }: { initial: SectionRow[] }) {
+  const [rows, setRows] = useState(() =>
+    initial.map((r) => ({ title: r.title, body: r.body ?? "", items: r.items.join("\n"), key: crypto.randomUUID() }))
+  );
+  const update = (key: string, patch: Partial<{ title: string; body: string; items: string }>) =>
+    setRows((rs) => rs.map((r) => (r.key === key ? { ...r, ...patch } : r)));
+  const move = (index: number, by: number) =>
+    setRows((rs) => {
+      const next = [...rs];
+      const [row] = next.splice(index, 1);
+      next.splice(index + by, 0, row);
+      return next;
+    });
+
+  return (
+    <div className="flex flex-col gap-4">
+      {rows.map((row, i) => (
+        <div key={row.key} className="flex flex-col gap-3 rounded-xl border border-ink/10 bg-stone/60 p-4">
+          <div className="flex items-center gap-2">
+            <input
+              name="sectionTitle"
+              value={row.title}
+              onChange={(e) => update(row.key, { title: e.target.value })}
+              placeholder="Heading, e.g. Benefits of carbon powder"
+              aria-label="Section heading"
+              className={`${inputClass} font-semibold`}
+            />
+            <button
+              type="button"
+              onClick={() => move(i, -1)}
+              disabled={i === 0}
+              aria-label="Move section up"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-ink/15 text-muted-3 hover:text-ink disabled:opacity-30"
+            >
+              ↑
+            </button>
+            <button
+              type="button"
+              onClick={() => move(i, 1)}
+              disabled={i === rows.length - 1}
+              aria-label="Move section down"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-ink/15 text-muted-3 hover:text-ink disabled:opacity-30"
+            >
+              ↓
+            </button>
+            <button
+              type="button"
+              onClick={() => setRows((rs) => rs.filter((r) => r.key !== row.key))}
+              aria-label={`Remove ${row.title || "section"}`}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-ink/15 text-muted-3 hover:border-red-600/30 hover:text-red-700"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+          <textarea
+            name="sectionBody"
+            value={row.body}
+            onChange={(e) => update(row.key, { body: e.target.value })}
+            rows={3}
+            placeholder="Paragraphs (optional). Leave a blank line between paragraphs."
+            aria-label="Section text"
+            className={`${inputClass} resize-y`}
+          />
+          <textarea
+            name="sectionItems"
+            value={row.items}
+            onChange={(e) => update(row.key, { items: e.target.value })}
+            rows={4}
+            placeholder="List items (optional), one per line. Short items show as tags, longer ones as a checklist."
+            aria-label="Section list items"
+            className={`${inputClass} resize-y`}
+          />
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={() => setRows((rs) => [...rs, { title: "", body: "", items: "", key: crypto.randomUUID() }])}
+        className="inline-flex w-fit items-center gap-1.5 rounded-full border border-ink/15 px-3.5 py-1.5 text-xs font-semibold text-ink hover:border-forest hover:text-forest"
+      >
+        <Plus className="h-3.5 w-3.5" /> Add section
+      </button>
+    </div>
+  );
+}

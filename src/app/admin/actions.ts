@@ -151,6 +151,25 @@ export async function saveProduct(_prev: ActionState, form: FormData): Promise<A
       .filter((s) => s.property && s.value)
       .slice(0, 30);
 
+    const bodies = form.getAll("sectionBody");
+    const itemLists = form.getAll("sectionItems");
+    const sections = form
+      .getAll("sectionTitle")
+      .map((t, i) => {
+        const body = String(bodies[i] ?? "").trim().slice(0, 4000);
+        return {
+          title: String(t).trim().slice(0, 120),
+          ...(body ? { body } : {}),
+          items: String(itemLists[i] ?? "")
+            .split(/\r?\n/)
+            .map((l) => l.trim().slice(0, 300))
+            .filter(Boolean)
+            .slice(0, 40),
+        };
+      })
+      .filter((s) => s.title)
+      .slice(0, 12);
+
     const newImage = file(form, "image");
     const uploaded = newImage ? await saveUpload(newImage) : null;
 
@@ -168,6 +187,7 @@ export async function saveProduct(_prev: ActionState, form: FormData): Promise<A
         imageAlt: text(form, "imageAlt", 200) || name,
         applications: lines(form, "applications", 30, 80),
         specs,
+        sections,
         ...(uploaded ? { image: uploaded } : {}),
       });
     });

@@ -3,6 +3,13 @@ export type Spec = { property: string; value: string; method?: string; unit?: st
 
 export type ProductSlug = "pyrolysis-oil" | "fuel-char" | "recovered-steel";
 
+/**
+ * A block of product page copy: a heading, optional paragraphs (separated
+ * by blank lines) and an optional list. Short list items render as chips,
+ * longer ones as a checklist.
+ */
+export type ProductSection = { title: string; body?: string; items: string[] };
+
 export type Product = {
   slug: ProductSlug;
   num: string;
@@ -14,6 +21,7 @@ export type Product = {
   imageAlt: string;
   applications: string[];
   specs: Spec[];
+  sections: ProductSection[];
 };
 
 export type Chairman = {

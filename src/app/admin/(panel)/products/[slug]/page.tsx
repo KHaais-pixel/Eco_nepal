@@ -5,7 +5,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import ActionForm from "@/components/admin/ActionForm";
 import PageHeader from "@/components/admin/PageHeader";
 import Thumb from "@/components/admin/Thumb";
-import { Field, SpecsEditor, SubmitButton, TextArea, TextInput } from "@/components/admin/fields";
+import { Field, SectionsEditor, SpecsEditor, SubmitButton, TextArea, TextInput } from "@/components/admin/fields";
 import { saveProduct } from "@/app/admin/actions";
 import { verifyAdmin } from "@/lib/auth/dal";
 import { getContent } from "@/lib/cms/store";
@@ -71,6 +71,14 @@ export default async function EditProductPage({ params }: { params: Promise<{ sl
             <Field label="Applications" hint="One per line. Shown on the Products overview page.">
               <TextArea name="applications" defaultValue={product.applications.join("\n")} rows={6} />
             </Field>
+          </section>
+
+          <section className="border-t border-ink/[0.08] pt-8">
+            <p className="mb-1 text-[13px] font-semibold">Page sections</p>
+            <p className="mb-4 text-xs text-muted-3">
+              Headed blocks shown after the product introduction, in this order.
+            </p>
+            <SectionsEditor initial={product.sections} />
           </section>
 
           <section className="border-t border-ink/[0.08] pt-8">

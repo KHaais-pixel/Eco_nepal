@@ -60,8 +60,10 @@ export default function ReactorIllustration({ groupRef, partRef, className = "" 
         {Array.from({ length: 12 }).map((_, i) => {
           const angle = (i / 12) * Math.PI * 2;
           const r = 30 + (i % 3) * 12;
-          const cx = 100 + Math.cos(angle) * r;
-          const cy = 100 + Math.sin(angle) * r;
+          // Rounded: Math.sin/cos can differ in the last float digit between
+          // Node (server render) and the browser, causing a hydration mismatch.
+          const cx = Math.round((100 + Math.cos(angle) * r) * 100) / 100;
+          const cy = Math.round((100 + Math.sin(angle) * r) * 100) / 100;
           return (
             <rect
               key={i}

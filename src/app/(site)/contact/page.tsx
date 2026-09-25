@@ -3,7 +3,7 @@ import Eyebrow from "@/components/Eyebrow";
 import ImageBlock from "@/components/ImageBlock";
 import RevealOnScroll from "@/components/RevealOnScroll";
 import ContactForm from "@/components/ContactForm";
-import { company } from "@/lib/site-data";
+import { getCompany } from "@/lib/cms/content";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -11,7 +11,8 @@ export const metadata: Metadata = {
     "Contact Eco Nepal Energy Industries Pvt. Ltd. at SEZ Bhairahawa, Rupandehi, Nepal, by phone, mobile, email, or enquiry form.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const company = await getCompany();
   const mapsQuery = encodeURIComponent(`${company.legalName}, ${company.address}`);
   const mobiles = company.mobiles.map((m) => m.label).join(" / ");
 

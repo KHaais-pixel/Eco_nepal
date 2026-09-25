@@ -1,61 +1,40 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useActionState, useState } from "react";
 import { enquiryRoles } from "@/lib/site-data";
+import { submitEnquiry, type EnquiryState } from "@/app/(site)/contact/actions";
 
-type Errors = Record<string, string>;
+const initialState: EnquiryState = { status: "idle" };
+
+const fieldClass =
+  "border-0 border-b border-ink/25 bg-transparent py-2.5 text-base outline-none placeholder:text-muted-4 focus:border-forest";
 
 export default function ContactForm() {
+  // Bumping the key remounts the form, resetting both the fields and the
+  // server action state for "Submit another enquiry".
+  const [formKey, setFormKey] = useState(0);
+  return <EnquiryForm key={formKey} onReset={() => setFormKey((k) => k + 1)} />;
+}
+
+function EnquiryForm({ onReset }: { onReset: () => void }) {
   const [role, setRole] = useState(0);
-  const [submitted, setSubmitted] = useState(false);
-  const [errors, setErrors] = useState<Errors>({});
-  const [honeypot, setHoneypot] = useState("");
-
+  const [state, formAction, pending] = useActionState(submitEnquiry, initialState);
   const activeRole = enquiryRoles[role];
+  const errors = state.errors ?? {};
+  const values = state.values;
 
-  function validate(formData: FormData): Errors {
-    const newErrors: Errors = {};
-    const fullName = String(formData.get("fullName") || "").trim();
-    const contact = String(formData.get("contact") || "").trim();
-    const message = String(formData.get("message") || "").trim();
-    const consent = formData.get("consent");
-
-    if (!fullName) newErrors.fullName = "Please enter your full name.";
-    if (!contact) newErrors.contact = "Please enter an email or phone number.";
-    if (!message) newErrors.message = "Please enter your enquiry.";
-    if (!consent) newErrors.consent = "Please provide consent to continue.";
-
-    return newErrors;
-  }
-
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (honeypot) return; // silently drop likely spam bot submissions
-    const formData = new FormData(e.currentTarget);
-    const newErrors = validate(formData);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
-      setSubmitted(true);
-    }
-  }
-
-  const fieldClass =
-    "border-0 border-b border-ink/25 bg-transparent py-2.5 text-base outline-none placeholder:text-muted-4 focus:border-forest";
-
-  if (submitted) {
+  if (state.status === "success") {
     return (
       <div role="status" className="py-10">
         <div className="mb-4 font-display text-[48px] font-medium leading-none text-ink">
           Thank you.
         </div>
         <p className="text-base leading-[1.6] text-muted-1">
-          Your enquiry has been received. This form is not yet connected to a live
-          backend, so please also reach our team directly by phone or email to ensure
-          time-sensitive enquiries are seen.
+          Your enquiry has been received. Our team will get back to you shortly.
         </p>
         <button
           type="button"
-          onClick={() => setSubmitted(false)}
+          onClick={onReset}
           className="mt-6 text-sm font-semibold text-forest hover:text-leaf"
         >
           Submit another enquiry
@@ -65,7 +44,8 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
+    <form action={formAction} noValidate>
+      <input type="hidden" name="role" value={activeRole.label} />
       <div className="font-mono-label mb-3 text-[11px] text-muted-3">I AM A</div>
       <div className="mb-8 flex flex-wrap gap-2">
         {enquiryRoles.map((r, i) => (
@@ -83,26 +63,27 @@ export default function ContactForm() {
         ))}
       </div>
 
-      <p className="mb-6 rounded-2xl border border-ink/[0.1] bg-cream px-4 py-3 text-xs leading-relaxed text-muted-3">
-        This form is not yet connected to a live email backend. Please also contact us
-        directly by phone or email for time-sensitive enquiries.
-      </p>
+      {state.status === "error" && state.message && (
+        <p role="alert" className="mb-6 rounded-2xl border border-red-600/20 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {state.message}
+        </p>
+      )}
 
       <div className="flex flex-col gap-6">
         <label className="flex flex-col gap-2 text-[13px] font-semibold">
           Full name
-          <input name="fullName" type="text" autoComplete="name" placeholder="Your name" className={fieldClass} />
+          <input name="fullName" type="text" autoComplete="name" defaultValue={values?.fullName} placeholder="Your name" className={fieldClass} />
           {errors.fullName && <span className="text-xs font-normal text-red-600">{errors.fullName}</span>}
         </label>
 
         <label className="flex flex-col gap-2 text-[13px] font-semibold">
           Company
-          <input name="company" type="text" autoComplete="organization" placeholder="Company name" className={fieldClass} />
+          <input name="company" type="text" autoComplete="organization" defaultValue={values?.company} placeholder="Company name" className={fieldClass} />
         </label>
 
         <label className="flex flex-col gap-2 text-[13px] font-semibold">
           Email or phone
-          <input name="contact" type="text" placeholder="How we reach you" className={fieldClass} />
+          <input name="contact" type="text" defaultValue={values?.contact} placeholder="How we reach you" className={fieldClass} />
           {errors.contact && <span className="text-xs font-normal text-red-600">{errors.contact}</span>}
         </label>
 
@@ -111,6 +92,7 @@ export default function ContactForm() {
           <textarea
             name="message"
             rows={4}
+            defaultValue={values?.message}
             placeholder={activeRole.msgPlaceholder}
             className={`${fieldClass} resize-y`}
           />
@@ -120,21 +102,14 @@ export default function ContactForm() {
         {/* Honeypot field for basic spam protection — hidden from real users */}
         <div className="hidden" aria-hidden="true">
           <label htmlFor="website">Leave this field empty</label>
-          <input
-            id="website"
-            name="website"
-            type="text"
-            tabIndex={-1}
-            autoComplete="off"
-            value={honeypot}
-            onChange={(e) => setHoneypot(e.target.value)}
-          />
+          <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
         </div>
 
         <label className="flex items-start gap-3 text-sm text-muted-2">
           <input
             name="consent"
             type="checkbox"
+            defaultChecked={values?.consent}
             className="mt-1 h-4 w-4 rounded border-ink/25 text-forest focus:ring-leaf/40"
           />
           I consent to Eco Nepal Energy Industries Pvt. Ltd. handling the information I
@@ -144,9 +119,10 @@ export default function ContactForm() {
 
         <button
           type="submit"
-          className="mt-2 inline-flex w-fit items-center justify-center rounded-full bg-forest px-7 py-[15px] text-[15px] font-semibold text-cream transition-colors hover:bg-leaf"
+          disabled={pending}
+          className="mt-2 inline-flex w-fit items-center justify-center rounded-full bg-forest px-7 py-[15px] text-[15px] font-semibold text-cream transition-colors hover:bg-leaf disabled:opacity-60"
         >
-          Send enquiry
+          {pending ? "Sending…" : "Send enquiry"}
         </button>
       </div>
     </form>

@@ -27,3 +27,6 @@ yarn-error.log*
 
 # local-only Claude Code settings
 .claude/settings.local.json
+
+# runtime data (content edits, enquiries, uploaded images) — lives on the server, back it up separately
+/data/

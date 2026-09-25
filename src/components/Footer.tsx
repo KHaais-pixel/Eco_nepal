@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { company } from "@/lib/site-data";
+import { getCompany } from "@/lib/cms/content";
 
 const year = new Date().getFullYear();
 
-export default function Footer() {
+export default async function Footer() {
+  const company = await getCompany();
   return (
     <footer className="bg-ink text-muted-4">
       <div className="mx-auto max-w-[1320px] px-5 pb-10 pt-16 sm:px-8">

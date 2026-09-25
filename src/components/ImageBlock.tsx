@@ -84,6 +84,9 @@ const ImageBlock = forwardRef<HTMLDivElement, ImageBlockProps>(function ImageBlo
           width={1200}
           height={900}
           priority={priority}
+          // Admin uploads are served by a route handler, not from public/,
+          // so they skip the optimizer (they're already web-sized).
+          unoptimized={src.startsWith("/uploads/")}
           onLoad={onImgLoad}
           className="h-full w-full object-cover"
         />

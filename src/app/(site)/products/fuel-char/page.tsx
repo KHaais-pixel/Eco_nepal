@@ -7,15 +7,18 @@ import Button from "@/components/Button";
 import SpecList from "@/components/SpecList";
 import ApplicationGrid from "@/components/ApplicationGrid";
 import CTABanner from "@/components/CTABanner";
-import { pyrolysisOilApplications, pyrolysisOilSpecs } from "@/lib/site-data";
+import { getProduct } from "@/lib/cms/content";
 
 export const metadata: Metadata = {
-  title: "Tyre Pyrolysis Oil (TPO)",
+  title: "Pyrolysis Fuel Char / Carbon Product",
   description:
-    "Tyre Pyrolysis Oil (TPO) — a dark liquid fuel condensed from tyre pyrolysis vapour, for compatible industrial heating applications.",
+    "Pyrolysis Fuel Char — the carbon-rich solid left after tyre pyrolysis, for selected industrial fuel and material applications.",
 };
 
-export default function PyrolysisOilPage() {
+export default async function FuelCharPage() {
+  const product = await getProduct("fuel-char");
+  const words = product.name.split(" ");
+  const lastWord = words.pop();
   return (
     <>
       <section className="mx-auto grid max-w-[1320px] grid-cols-1 items-center gap-10 px-5 pb-20 pt-[clamp(120px,16vh,170px)] sm:px-8 md:grid-cols-2 md:gap-24">
@@ -23,16 +26,13 @@ export default function PyrolysisOilPage() {
           <div className="font-mono-label mb-7 flex gap-2 text-xs text-muted-3">
             <Link href="/products" className="text-leaf">PRODUCTS</Link>
             <span>/</span>
-            <span>PYROLYSIS OIL</span>
+            <span>{product.name.toUpperCase()}</span>
           </div>
           <h1 className="mb-7 font-display text-[clamp(52px,7vw,108px)] font-semibold leading-[0.95] tracking-[-0.025em] text-ink">
-            Pyrolysis <em className="not-italic text-leaf">oil</em>
+            {words.join(" ")}{words.length ? " " : ""}<em className="not-italic text-leaf">{lastWord}</em>
           </h1>
           <p className="mb-8 max-w-[480px] text-lg leading-[1.6] text-muted-1">
-            A dark liquid fuel condensed from tyre pyrolysis vapour. Intended for use as
-            an industrial furnace oil substitute in compatible boilers, kilns, and
-            furnaces, subject to equipment suitability, product testing, and safe
-            handling.
+            {product.description}
           </p>
           <div className="flex flex-wrap gap-3">
             <Button href="/contact" variant="dark">Request a quote</Button>
@@ -41,8 +41,9 @@ export default function PyrolysisOilPage() {
         </RevealOnScroll>
         <RevealOnScroll delay={100}>
           <ImageBlock
-            src="/brand/pyrolysis-oil-product.jpg"
-            alt="Eco Furnace Oil (TPO) product graphic representing tyre pyrolysis oil"
+            src={product.image ?? undefined}
+            alt={product.imageAlt}
+            placeholderLabel={`[ ${product.name} — image pending ]`}
             aspect="aspect-square"
             rounded="rounded-[20px]"
             priority
@@ -62,7 +63,7 @@ export default function PyrolysisOilPage() {
             </p>
           </RevealOnScroll>
           <RevealOnScroll delay={100}>
-            <SpecList rows={pyrolysisOilSpecs} />
+            <SpecList rows={product.specs} />
           </RevealOnScroll>
         </Container>
       </section>
@@ -73,11 +74,11 @@ export default function PyrolysisOilPage() {
             Where it&rsquo;s used
           </h2>
         </RevealOnScroll>
-        <ApplicationGrid items={pyrolysisOilApplications} />
+        <ApplicationGrid items={product.applications} />
         <p className="mt-8 max-w-[520px] text-sm leading-[1.6] text-muted-3">
-          Potential application categories only. Suitability depends on equipment
-          compatibility, product testing, and applicable requirements — please contact
-          us to discuss your specific use case.
+          Potential application categories, subject to quality and technical evaluation.
+          End users should confirm suitability against their own requirements before
+          adoption.
         </p>
       </Container>
 

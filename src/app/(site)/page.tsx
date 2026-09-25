@@ -9,6 +9,7 @@ import HomeStoryScroll from "@/components/HomeStoryScroll";
 import ProductsScrub from "@/components/home/ProductsScrub";
 import CTABanner from "@/components/CTABanner";
 import { audiences } from "@/lib/site-data";
+import { getProducts } from "@/lib/cms/content";
 
 export const metadata: Metadata = {
   title: "Waste Tyre Recycling & Pyrolysis in Nepal",
@@ -16,7 +17,16 @@ export const metadata: Metadata = {
     "Eco Nepal Energy Industries converts end-of-life tyres into pyrolysis oil, fuel char, and recovered steel at SEZ Bhairahawa, Nepal.",
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const products = (await getProducts()).map((p) => ({
+    num: p.num,
+    name: p.name,
+    tag: p.tag,
+    short: p.short,
+    href: `/products/${p.slug}`,
+    imageSrc: p.image,
+    imageAlt: p.imageAlt,
+  }));
   return (
     <>
       {/* Hero */}
@@ -63,7 +73,7 @@ export default function HomePage() {
       <HomeStoryScroll />
 
       {/* What we produce — scroll-scrubbed tyre-to-products animation */}
-      <ProductsScrub />
+      <ProductsScrub products={products} />
 
       {/* Work with us */}
       <section className="bg-deep text-cream">

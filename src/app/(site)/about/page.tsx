@@ -5,6 +5,7 @@ import ImageBlock from "@/components/ImageBlock";
 import RevealOnScroll from "@/components/RevealOnScroll";
 import CTABanner from "@/components/CTABanner";
 import { aboutFacts } from "@/lib/site-data";
+import { getCompany } from "@/lib/cms/content";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -12,7 +13,13 @@ export const metadata: Metadata = {
     "Eco Nepal Energy Industries Pvt. Ltd. is a waste tyre recycling and pyrolysis company in the Special Economic Zone at Bhairahawa, Rupandehi.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const company = await getCompany();
+  const { chairman } = company;
+  // Name/location facts follow the editable company info; the rest are static.
+  const facts = aboutFacts.map((f) =>
+    f.k === "COMPANY" ? { ...f, v: company.legalName } : f.k === "LOCATION" ? { ...f, v: company.address } : f
+  );
   return (
     <>
       <section className="mx-auto max-w-[1320px] px-5 pb-20 pt-[clamp(140px,18vh,200px)] sm:px-8">
@@ -29,10 +36,11 @@ export default function AboutPage() {
 
       <Container>
         <ImageBlock
-          alt="Eco Nepal Energy facility — reactor hall"
-          placeholderLabel="[ facility photo — reactor hall ]"
+          src="/brand/factory.jpg"
+          alt="Eco Nepal Energy pyrolysis plant: two blue reactors under a steel-frame shed with a red roof"
           aspect="h-[clamp(340px,60vh,640px)]"
           clip
+          priority
         />
       </Container>
 
@@ -44,7 +52,7 @@ export default function AboutPage() {
           </p>
         </RevealOnScroll>
         <RevealOnScroll delay={100} className="flex flex-col">
-          {aboutFacts.map((f) => (
+          {facts.map((f) => (
             <div
               key={f.k}
               className="grid grid-cols-[120px_1fr] gap-4 border-t border-ink/[0.12] py-[18px] text-[15px] sm:grid-cols-[160px_1fr]"
@@ -74,31 +82,16 @@ export default function AboutPage() {
           <RevealOnScroll delay={100}>
             <Eyebrow className="mb-7">MESSAGE FROM THE CHAIRMAN</Eyebrow>
             <p className="mb-8 font-display text-[clamp(28px,3vw,42px)] font-medium leading-[1.2] tracking-[-0.02em] text-muted-4">
-              &ldquo;We are proud to be a pioneer in Nepal&rsquo;s pyrolysis industry,
-              leading the production of pyrolysis oil from waste tires and rubber
-              scraps.&rdquo;
+              &ldquo;{chairman.quote}&rdquo;
             </p>
             <div className="space-y-4 text-[15px] leading-[1.6] text-muted-2">
-              <p>
-                Our journey thus far has been marked by dedication, innovation, and
-                integrity. With a skilled team, experienced management, and
-                state-of-the-art infrastructure, we have quickly gained the trust and
-                appreciation of our clients.
-              </p>
-              <p>
-                The promoters bring decades of experience across diverse industries —
-                from large-scale noodle and biscuit production to GI pipe fittings, brick
-                production, furnace oil, and automobile businesses — giving us a strong
-                foundation to navigate challenges and seize opportunities.
-              </p>
-              <p>
-                Together, we envision a cleaner and more sustainable Nepal, where
-                innovation and responsibility go hand in hand.
-              </p>
+              {chairman.paragraphs.map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
             </div>
             <div className="mt-7">
-              <div className="font-semibold text-ink">Ajay Man Shrestha</div>
-              <div className="text-sm text-muted-3">Chairman, Eco Nepal Energy Industries Pvt. Ltd.</div>
+              <div className="font-semibold text-ink">{chairman.name}</div>
+              <div className="text-sm text-muted-3">{chairman.title}</div>
             </div>
           </RevealOnScroll>
         </div>

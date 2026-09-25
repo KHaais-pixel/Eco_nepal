@@ -8,7 +8,6 @@ import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
 import { useGSAP } from "@gsap/react";
 import ImageBlock from "@/components/ImageBlock";
 import TyreGraphic from "./TyreGraphic";
-import { homeProducts } from "@/lib/site-data";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, ScrambleTextPlugin);
@@ -27,7 +26,17 @@ const PARTICLE_COLORS = {
   steel: "#8A948D",
 };
 
-export default function ProductsScrub() {
+export type HomeProduct = {
+  num: string;
+  name: string;
+  tag: string;
+  short: string;
+  href: string;
+  imageSrc: string | null;
+  imageAlt: string;
+};
+
+export default function ProductsScrub({ products: homeProducts }: { products: HomeProduct[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -52,7 +61,7 @@ export default function ProductsScrub() {
   // placeholder box).
   useEffect(() => {
     if (loadedCount >= homeProducts.length) ScrollTrigger.refresh();
-  }, [loadedCount]);
+  }, [loadedCount, homeProducts.length]);
 
   useGSAP(
     () => {

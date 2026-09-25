@@ -1,0 +1,70 @@
+"use client";
+
+import { useRef } from "react";
+import { useScrollStoryProgress } from "@/hooks/useScrollStoryProgress";
+import { storyItems } from "@/lib/site-data";
+import ScrollScrubVideo from "./ScrollScrubVideo";
+import Eyebrow from "./Eyebrow";
+
+export default function HomeStoryScroll() {
+  const ref = useRef<HTMLElement>(null);
+  const { progress, activeIndex } = useScrollStoryProgress(ref, storyItems.length);
+  const active = storyItems[activeIndex];
+
+  return (
+    <section
+      ref={ref}
+      className="relative border-y border-ink/[0.08] bg-stone"
+      style={{ height: "340vh" }}
+    >
+      <div className="sticky top-[72px] mx-auto grid h-[calc(100vh-72px)] max-w-[1320px] grid-cols-1 items-center gap-8 px-5 py-6 sm:px-8 md:grid-cols-2 md:gap-16">
+        <div className="relative h-[min(64vh,560px)] overflow-hidden rounded-[20px] bg-stone">
+          <ScrollScrubVideo
+            src="/story-scrub/tyre-scrub.mp4"
+            poster="/story-scrub/tyre-scrub-poster.jpg"
+            alt="Waste tyre recycling process, scrubbing through collection, pyrolysis oil, fuel char, and recovered steel"
+            progress={progress}
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0" />
+          <div className="pointer-events-none absolute inset-x-6 bottom-6 flex items-end justify-between gap-4">
+            <div className="font-display text-[clamp(80px,11vw,160px)] leading-[0.8] tracking-[-0.03em] text-lime">
+              {active.pct}
+            </div>
+            <div className="font-mono-label text-right text-[11px] text-cream/80">{active.pctLabel}</div>
+          </div>
+        </div>
+
+        <div>
+          <Eyebrow className="mb-5">ONE TYRE · FOUR STAGES</Eyebrow>
+          <div className="flex flex-col gap-1.5">
+            {storyItems.map((item, i) => {
+              const isActive = i === activeIndex;
+              return (
+                <div
+                  key={item.n}
+                  className="border-t border-ink/10 py-2 sm:py-3"
+                  style={{ opacity: isActive ? 1 : 0.28, transition: "opacity 0.4s" }}
+                >
+                  <div className="flex items-baseline gap-4">
+                    <span className="font-mono-label text-xs text-leaf">{item.n}</span>
+                    <span className="font-display text-[clamp(20px,3vw,34px)] leading-[1.05]">
+                      {item.title}
+                    </span>
+                  </div>
+                  {isActive && (
+                    <p className="ml-9 mt-2 max-w-[420px] text-[15px] leading-[1.55] text-muted-2">
+                      {item.body}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <p className="font-mono-label mt-6 text-[11px] leading-[1.5] text-muted-4">
+            Typical industry yields by weight. Plant-specific figures subject to confirmation.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -97,7 +97,7 @@ export default async function HomePage() {
                 <span className="font-mono-label text-xs text-lime">{a.who}</span>
                 <h3 className="font-display text-[32px] font-semibold leading-[1.1]">{a.title}</h3>
                 <p className="flex-1 text-[15px] leading-[1.6] text-cream/70">{a.body}</p>
-                <Link href="/contact" className="text-sm font-semibold text-cream hover:text-lime">
+                <Link href="/contact" className="-my-3 w-fit py-3 text-sm font-semibold text-cream hover:text-lime">
                   {a.cta} →
                 </Link>
               </RevealOnScroll>

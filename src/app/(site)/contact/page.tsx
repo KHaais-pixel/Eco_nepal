@@ -24,33 +24,33 @@ export default async function ContactPage() {
           Let&rsquo;s talk <em className="not-italic text-leaf">tyres &amp; fuel.</em>
         </h1>
         <div className="flex flex-col">
-          <div className="grid grid-cols-[120px_1fr] gap-4 border-t border-ink/[0.12] py-[18px]">
+          <div className="grid grid-cols-[96px_minmax(0,1fr)] gap-4 [overflow-wrap:anywhere] sm:grid-cols-[120px_minmax(0,1fr)] border-t border-ink/[0.12] py-[18px]">
             <span className="font-mono-label text-xs text-muted-3">ADDRESS</span>
             <span className="leading-[1.55] text-ink">{company.address}</span>
           </div>
-          <div className="grid grid-cols-[120px_1fr] gap-4 border-t border-ink/[0.12] py-[18px]">
+          <div className="grid grid-cols-[96px_minmax(0,1fr)] gap-4 [overflow-wrap:anywhere] sm:grid-cols-[120px_minmax(0,1fr)] border-t border-ink/[0.12] py-[18px]">
             <span className="font-mono-label text-xs text-muted-3">PHONE</span>
             <span>
-              <a href={company.telephoneHref} className="text-ink hover:text-forest">
+              <a href={company.telephoneHref} className="-my-2.5 inline-block py-2.5 text-ink hover:text-forest">
                 {company.telephone}
               </a>
               <br />
               <span className="text-ink">{mobiles}</span>
             </span>
           </div>
-          <div className="grid grid-cols-[120px_1fr] gap-4 border-t border-ink/[0.12] py-[18px]">
+          <div className="grid grid-cols-[96px_minmax(0,1fr)] gap-4 [overflow-wrap:anywhere] sm:grid-cols-[120px_minmax(0,1fr)] border-t border-ink/[0.12] py-[18px]">
             <span className="font-mono-label text-xs text-muted-3">EMAIL</span>
-            <a href={`mailto:${company.email}`} className="text-ink hover:text-forest break-all">
+            <a href={`mailto:${company.email}`} className="-my-2.5 inline-block py-2.5 text-ink hover:text-forest break-all">
               {company.email}
             </a>
           </div>
-          <div className="grid grid-cols-[120px_1fr] gap-4 border-y border-ink/[0.12] py-[18px]">
+          <div className="grid grid-cols-[96px_minmax(0,1fr)] gap-4 [overflow-wrap:anywhere] sm:grid-cols-[120px_minmax(0,1fr)] border-y border-ink/[0.12] py-[18px]">
             <span className="font-mono-label text-xs text-muted-3">WEBSITE</span>
             <a
               href={company.websiteHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-ink hover:text-forest"
+              className="-my-2.5 inline-block py-2.5 text-ink hover:text-forest"
             >
               {company.website}
             </a>
@@ -68,7 +68,7 @@ export default async function ContactPage() {
             href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-flex text-sm font-semibold text-forest hover:text-leaf"
+            className="mt-1 inline-flex py-2.5 text-sm font-semibold text-forest hover:text-leaf"
           >
             Search this address on Google Maps →
           </a>

@@ -32,29 +32,29 @@ export default async function Footer() {
             </span>
           </div>
 
-          <div className="flex flex-col gap-2.5 text-sm">
-            <span className="font-mono-label mb-1 text-[11px] text-leaf/80">PRODUCTS</span>
-            <Link href="/products/pyrolysis-oil" className="hover:text-cream">Pyrolysis oil</Link>
-            <Link href="/products/fuel-char" className="hover:text-cream">Fuel char</Link>
-            <Link href="/products/recovered-steel" className="hover:text-cream">Recovered steel</Link>
+          <div className="flex flex-col text-sm">
+            <span className="font-mono-label mb-1.5 text-[11px] text-leaf/80">PRODUCTS</span>
+            <Link href="/products/pyrolysis-oil" className="py-2.5 text-cream/70 hover:text-cream">Pyrolysis oil</Link>
+            <Link href="/products/fuel-char" className="py-2.5 text-cream/70 hover:text-cream">Fuel char</Link>
+            <Link href="/products/recovered-steel" className="py-2.5 text-cream/70 hover:text-cream">Recovered steel</Link>
           </div>
 
-          <div className="flex flex-col gap-2.5 text-sm">
-            <span className="font-mono-label mb-1 text-[11px] text-leaf/80">COMPANY</span>
-            <Link href="/about" className="hover:text-cream">About</Link>
-            <Link href="/process" className="hover:text-cream">Process</Link>
-            <Link href="/sustainability" className="hover:text-cream">Sustainability</Link>
-            <Link href="/faq" className="hover:text-cream">FAQ</Link>
-            <Link href="/contact" className="hover:text-cream">Contact</Link>
+          <div className="flex flex-col text-sm">
+            <span className="font-mono-label mb-1.5 text-[11px] text-leaf/80">COMPANY</span>
+            <Link href="/about" className="py-2.5 text-cream/70 hover:text-cream">About</Link>
+            <Link href="/process" className="py-2.5 text-cream/70 hover:text-cream">Process</Link>
+            <Link href="/sustainability" className="py-2.5 text-cream/70 hover:text-cream">Sustainability</Link>
+            <Link href="/faq" className="py-2.5 text-cream/70 hover:text-cream">FAQ</Link>
+            <Link href="/contact" className="py-2.5 text-cream/70 hover:text-cream">Contact</Link>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-4 pt-7 text-[13px]">
           <span>© {year} {company.legalName}</span>
-          <div className="flex flex-wrap gap-x-4 gap-y-1">
-            <a href={company.telephoneHref} className="hover:text-cream">{company.telephone}</a>
-            <a href={`mailto:${company.email}`} className="hover:text-cream">{company.email}</a>
-            <a href={company.websiteHref} target="_blank" rel="noopener noreferrer" className="hover:text-cream">
+          <div className="flex flex-wrap gap-x-5 gap-y-0">
+            <a href={company.telephoneHref} className="py-2.5 text-cream/70 hover:text-cream">{company.telephone}</a>
+            <a href={`mailto:${company.email}`} className="py-2.5 text-cream/70 hover:text-cream">{company.email}</a>
+            <a href={company.websiteHref} target="_blank" rel="noopener noreferrer" className="py-2.5 text-cream/70 hover:text-cream">
               {company.website}
             </a>
           </div>

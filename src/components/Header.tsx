@@ -104,7 +104,7 @@ export default function Header() {
 
       <div
         className={`overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out lg:hidden ${
-          mobileOpen ? "max-h-[40rem] opacity-100" : "max-h-0 opacity-0"
+          mobileOpen ? "max-h-[calc(100svh-72px)] overflow-y-auto overscroll-contain opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         <nav className="space-y-1 border-t border-ink/[0.08] bg-cream px-5 py-4" aria-label="Mobile">
@@ -123,7 +123,7 @@ export default function Header() {
                 </button>
                 <div
                   className={`overflow-hidden pl-3 transition-[max-height] duration-300 ${
-                    mobileProductsOpen ? "max-h-60" : "max-h-0"
+                    mobileProductsOpen ? "max-h-72" : "max-h-0"
                   }`}
                 >
                   {item.children.map((child) => (
@@ -131,7 +131,7 @@ export default function Header() {
                       key={child.href}
                       href={child.href}
                       onClick={closeMobileMenu}
-                      className="block py-2 text-sm text-muted-3 hover:text-forest"
+                      className="block py-2.5 text-sm text-muted-3 hover:text-forest"
                     >
                       {child.label}
                     </Link>

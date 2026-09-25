@@ -24,7 +24,7 @@ export default async function FuelCharPage() {
       <section className="mx-auto grid max-w-[1320px] grid-cols-1 items-center gap-10 px-5 pb-20 pt-[clamp(120px,16vh,170px)] sm:px-8 md:grid-cols-2 md:gap-24">
         <RevealOnScroll>
           <div className="font-mono-label mb-7 flex gap-2 text-xs text-muted-3">
-            <Link href="/products" className="text-leaf">PRODUCTS</Link>
+            <Link href="/products" className="-my-3 inline-block py-3 text-leaf">PRODUCTS</Link>
             <span>/</span>
             <span>{product.name.toUpperCase()}</span>
           </div>

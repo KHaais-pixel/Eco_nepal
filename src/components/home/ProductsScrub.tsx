@@ -289,7 +289,7 @@ export default function ProductsScrub({ products: homeProducts }: { products: Ho
             What we produce
           </h2>
         </div>
-        <a href="/products" className="text-[15px] font-semibold text-forest hover:text-leaf">
+        <a href="/products" className="-my-3 inline-block py-3 text-[15px] font-semibold text-forest hover:text-leaf">
           All products →
         </a>
       </div>

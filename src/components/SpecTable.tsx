@@ -32,8 +32,8 @@ export function SpecTable({ rows, valueLabel, caption }: { rows: Spec[]; valueLa
               <td className={`${td} font-mono-label text-xs text-muted-3 max-sm:hidden`}>{num(i)}</td>
               <th scope="row" className={`${td} text-left font-semibold text-ink`}>{row.property}</th>
               {hasMethod && <td className={`${td} text-muted-2 max-sm:hidden`}>{row.method || "–"}</td>}
-              {hasUnit && <td className={`${td} text-muted-2`}>{row.unit || "–"}</td>}
-              <td className={`${td} font-mono-label text-[15px] text-forest`}>{row.value}</td>
+              {hasUnit && <td className={`${td} whitespace-nowrap text-muted-2`}>{row.unit || "–"}</td>}
+              <td className={`${td} whitespace-nowrap font-mono-label text-[15px] text-forest`}>{row.value}</td>
             </tr>
           ))}
         </tbody>
@@ -67,7 +67,7 @@ export function FuelComparisonTable() {
                 <td className={`${td} font-mono-label text-xs text-muted-3 max-sm:hidden`}>{num(i)}</td>
                 <th scope="row" className={`${td} max-sm:sticky max-sm:left-0 max-sm:z-[1] bg-white text-left font-semibold text-ink max-sm:max-w-[140px]`}>{row.property}</th>
                 <td className={`${td} text-muted-2 max-sm:hidden`}>{row.method}</td>
-                <td className={`${td} text-muted-2`}>{row.unit}</td>
+                <td className={`${td} whitespace-nowrap text-muted-2`}>{row.unit}</td>
                 <td className={`${td} whitespace-nowrap bg-leaf/[0.07] font-mono-label text-[15px] text-forest`}>{row.tpo}</td>
                 <td className={`${td} whitespace-nowrap font-mono-label text-[15px] text-muted-1`}>{row.fo}</td>
                 <td className={`${td} whitespace-nowrap font-mono-label text-[15px] text-muted-1`}>{row.ldo}</td>

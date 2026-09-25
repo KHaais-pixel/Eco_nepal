@@ -17,8 +17,8 @@ export default function HomeStoryScroll() {
       className="relative border-y border-ink/[0.08] bg-stone"
       style={{ height: "340vh" }}
     >
-      <div className="sticky top-[72px] mx-auto grid h-[calc(100vh-72px)] max-w-[1320px] grid-cols-1 items-center gap-8 px-5 py-6 sm:px-8 md:grid-cols-2 md:gap-16">
-        <div className="relative h-[min(64vh,560px)] overflow-hidden rounded-[20px] bg-stone">
+      <div className="sticky top-[72px] mx-auto grid h-[calc(100svh-72px)] max-w-[1320px] grid-cols-1 content-center items-center gap-4 overflow-hidden px-5 py-4 sm:px-8 md:grid-cols-2 md:gap-16 md:py-6">
+        <div className="relative h-[min(34svh,300px)] overflow-hidden rounded-[20px] bg-stone md:h-[min(64vh,560px)]">
           <ScrollScrubVideo
             src="/story-scrub/tyre-scrub.mp4"
             poster="/story-scrub/tyre-scrub-poster.jpg"
@@ -27,7 +27,7 @@ export default function HomeStoryScroll() {
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0" />
           <div className="pointer-events-none absolute inset-x-6 bottom-6 flex items-end justify-between gap-4">
-            <div className="font-display text-[clamp(80px,11vw,160px)] leading-[0.8] tracking-[-0.03em] text-lime">
+            <div className="font-display text-[clamp(64px,11vw,160px)] leading-[0.8] tracking-[-0.03em] text-lime">
               {active.pct}
             </div>
             <div className="font-mono-label text-right text-[11px] text-cream/80">{active.pctLabel}</div>
@@ -35,8 +35,8 @@ export default function HomeStoryScroll() {
         </div>
 
         <div>
-          <Eyebrow className="mb-5">ONE TYRE · FOUR STAGES</Eyebrow>
-          <div className="flex flex-col gap-1.5">
+          <Eyebrow className="mb-3 md:mb-5">ONE TYRE · FOUR STAGES</Eyebrow>
+          <div className="flex flex-col md:gap-1.5">
             {storyItems.map((item, i) => {
               const isActive = i === activeIndex;
               return (
@@ -52,7 +52,7 @@ export default function HomeStoryScroll() {
                     </span>
                   </div>
                   {isActive && (
-                    <p className="ml-9 mt-2 max-w-[420px] text-[15px] leading-[1.55] text-muted-2">
+                    <p className="ml-9 mt-1.5 max-w-[420px] text-[14px] leading-[1.5] text-muted-2 md:mt-2 md:text-[15px] md:leading-[1.55]">
                       {item.body}
                     </p>
                   )}
@@ -60,7 +60,7 @@ export default function HomeStoryScroll() {
               );
             })}
           </div>
-          <p className="font-mono-label mt-6 text-[11px] leading-[1.5] text-muted-4">
+          <p className="font-mono-label mt-3 text-[11px] leading-[1.5] text-muted-4 md:mt-6">
             Typical industry yields by weight. Plant-specific figures subject to confirmation.
           </p>
         </div>

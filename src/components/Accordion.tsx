@@ -39,6 +39,7 @@ export default function Accordion({
               id={panelId}
               role="region"
               aria-labelledby={buttonId}
+              inert={!isOpen}
               className={`grid overflow-hidden transition-all duration-300 ease-in-out ${
                 isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
               }`}

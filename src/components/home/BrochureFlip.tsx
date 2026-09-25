@@ -331,7 +331,7 @@ export default function BrochureFlip({ pages, pdf }: { pages: Page[]; pdf: strin
           style={{
             width: "var(--pw)",
             height: "calc(var(--pw) * 1.4143)",
-            ["--pw" as string]: "min(80vw, calc((100svh - 290px) * 0.7071))",
+            ["--pw" as string]: "min(80vw, calc((100svh - 340px) * 0.7071))",
           }}
         >
           <div aria-hidden="true" className="absolute inset-x-[6%] -bottom-5 h-8 rounded-[50%] bg-ink/25 blur-xl" />

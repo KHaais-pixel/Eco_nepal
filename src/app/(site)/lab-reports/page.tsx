@@ -63,7 +63,7 @@ export default async function LabReportsPage() {
       <section className="mx-auto max-w-[1320px] px-5 pb-[clamp(64px,8vw,110px)] pt-[clamp(120px,16vh,170px)] sm:px-8">
         <RevealOnScroll>
           <div className="font-mono-label mb-7 flex gap-2 text-xs text-muted-3">
-            <Link href="/products" className="text-leaf">PRODUCTS</Link>
+            <Link href="/products" className="-my-3 inline-block py-3 text-leaf">PRODUCTS</Link>
             <span>/</span>
             <span>LAB REPORTS</span>
           </div>

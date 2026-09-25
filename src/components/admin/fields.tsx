@@ -59,7 +59,7 @@ export function ConfirmButton({ message, children }: { message: string; children
   );
 }
 
-type SpecRow = { property: string; value: string; method?: string; unit?: string };
+type SpecRow = { property: string; value: string; method?: string; unit?: string; propertyNe?: string; valueNe?: string };
 
 /**
  * Editable specification rows, submitted as specProperty[] / specMethod[] /
@@ -67,7 +67,7 @@ type SpecRow = { property: string; value: string; method?: string; unit?: string
  */
 export function SpecsEditor({ initial }: { initial: SpecRow[] }) {
   const [rows, setRows] = useState(() =>
-    initial.map((r) => ({ property: r.property, value: r.value, method: r.method ?? "", unit: r.unit ?? "", key: crypto.randomUUID() }))
+    initial.map((r) => ({ property: r.property, value: r.value, method: r.method ?? "", unit: r.unit ?? "", propertyNe: r.propertyNe ?? "", valueNe: r.valueNe ?? "", key: crypto.randomUUID() }))
   );
   const update = (key: string, patch: Partial<SpecRow>) =>
     setRows((rs) => rs.map((r) => (r.key === key ? { ...r, ...patch } : r)));
@@ -83,7 +83,8 @@ export function SpecsEditor({ initial }: { initial: SpecRow[] }) {
         <span className="w-11" />
       </div>
       {rows.map((row) => (
-        <div key={row.key} className={cols}>
+        <div key={row.key} className="flex flex-col gap-1.5 rounded-xl border border-ink/10 p-2">
+        <div className={cols}>
           <input
             name="specProperty"
             value={row.property}
@@ -125,11 +126,34 @@ export function SpecsEditor({ initial }: { initial: SpecRow[] }) {
             <Trash2 className="h-4 w-4" />
           </button>
         </div>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-[1.3fr_1fr_0.7fr_1fr_auto]">
+          <input
+            name="specPropertyNe"
+            value={row.propertyNe}
+            onChange={(e) => update(row.key, { propertyNe: e.target.value })}
+            placeholder="नेपाली: मापदण्ड"
+            aria-label="Test parameter (Nepali)"
+            lang="ne"
+            className={inputClass}
+          />
+          <span className="hidden sm:col-span-2 sm:block" />
+          <input
+            name="specValueNe"
+            value={row.valueNe}
+            onChange={(e) => update(row.key, { valueNe: e.target.value })}
+            placeholder="नेपाली: मान"
+            aria-label="Value (Nepali)"
+            lang="ne"
+            className={inputClass}
+          />
+          <span className="hidden w-11 sm:block" />
+        </div>
+        </div>
       ))}
       <button
         type="button"
         onClick={() =>
-          setRows((rs) => [...rs, { property: "", value: "", method: "", unit: "", key: crypto.randomUUID() }])
+          setRows((rs) => [...rs, { property: "", value: "", method: "", unit: "", propertyNe: "", valueNe: "", key: crypto.randomUUID() }])
         }
         className="inline-flex w-fit items-center gap-1.5 rounded-full border border-ink/15 px-3.5 py-1.5 text-xs font-semibold text-ink hover:border-forest hover:text-forest"
       >
@@ -139,7 +163,7 @@ export function SpecsEditor({ initial }: { initial: SpecRow[] }) {
   );
 }
 
-type SectionRow = { title: string; body?: string; items: string[] };
+type SectionRow = { title: string; body?: string; items: string[]; ne?: { title: string; body?: string; items: string[] } };
 
 /**
  * Editable product page sections, submitted as sectionTitle[] /
@@ -147,9 +171,9 @@ type SectionRow = { title: string; body?: string; items: string[] };
  */
 export function SectionsEditor({ initial }: { initial: SectionRow[] }) {
   const [rows, setRows] = useState(() =>
-    initial.map((r) => ({ title: r.title, body: r.body ?? "", items: r.items.join("\n"), key: crypto.randomUUID() }))
+    initial.map((r) => ({ title: r.title, body: r.body ?? "", items: r.items.join("\n"), titleNe: r.ne?.title ?? "", bodyNe: r.ne?.body ?? "", itemsNe: r.ne?.items.join("\n") ?? "", key: crypto.randomUUID() }))
   );
-  const update = (key: string, patch: Partial<{ title: string; body: string; items: string }>) =>
+  const update = (key: string, patch: Partial<{ title: string; body: string; items: string; titleNe: string; bodyNe: string; itemsNe: string }>) =>
     setRows((rs) => rs.map((r) => (r.key === key ? { ...r, ...patch } : r)));
   const move = (index: number, by: number) =>
     setRows((rs) => {
@@ -217,11 +241,43 @@ export function SectionsEditor({ initial }: { initial: SectionRow[] }) {
             aria-label="Section list items"
             className={`${inputClass} resize-y`}
           />
+          <div className="mt-1 flex flex-col gap-3 border-t border-ink/10 pt-3">
+            <p className="text-xs font-semibold text-muted-2">नेपाली · Nepali</p>
+            <input
+              name="sectionTitleNe"
+              value={row.titleNe}
+              onChange={(e) => update(row.key, { titleNe: e.target.value })}
+              placeholder="शीर्षक (नेपाली)"
+              aria-label="Section heading (Nepali)"
+              lang="ne"
+              className={`${inputClass} font-semibold`}
+            />
+            <textarea
+              name="sectionBodyNe"
+              value={row.bodyNe}
+              onChange={(e) => update(row.key, { bodyNe: e.target.value })}
+              rows={3}
+              placeholder="अनुच्छेदहरू (वैकल्पिक)"
+              aria-label="Section text (Nepali)"
+              lang="ne"
+              className={`${inputClass} resize-y`}
+            />
+            <textarea
+              name="sectionItemsNe"
+              value={row.itemsNe}
+              onChange={(e) => update(row.key, { itemsNe: e.target.value })}
+              rows={4}
+              placeholder="सूचीका बुँदाहरू (वैकल्पिक), प्रति पङ्क्ति एक"
+              aria-label="Section list items (Nepali)"
+              lang="ne"
+              className={`${inputClass} resize-y`}
+            />
+          </div>
         </div>
       ))}
       <button
         type="button"
-        onClick={() => setRows((rs) => [...rs, { title: "", body: "", items: "", key: crypto.randomUUID() }])}
+        onClick={() => setRows((rs) => [...rs, { title: "", body: "", items: "", titleNe: "", bodyNe: "", itemsNe: "", key: crypto.randomUUID() }])}
         className="inline-flex w-fit items-center gap-1.5 rounded-full border border-ink/15 px-3.5 py-1.5 text-xs font-semibold text-ink hover:border-forest hover:text-forest"
       >
         <Plus className="h-3.5 w-3.5" /> Add section

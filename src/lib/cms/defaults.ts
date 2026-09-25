@@ -11,7 +11,25 @@ import {
   steelApplications,
   steelSpecs,
 } from "@/lib/site-data";
-import type { SiteContent } from "./types";
+import {
+  companyNe,
+  fuelCharNe,
+  fuelCharSectionsNe,
+  fuelCharSpecsNe,
+  pyrolysisOilNe,
+  pyrolysisOilSectionsNe,
+  pyrolysisOilSpecsNe,
+  recoveredSteelNe,
+  recoveredSteelSectionsNe,
+  steelSpecsNe,
+} from "./defaults-ne";
+import type { ProductSection, SectionText, Spec, SiteContent } from "./types";
+
+// Pair each English spec row / section with its Nepali text (by position).
+const withNe = (specs: Omit<Spec, "propertyNe" | "valueNe">[], ne: { propertyNe: string; valueNe: string }[]): Spec[] =>
+  specs.map((s, i) => ({ ...s, ...ne[i] }));
+const sectionsWithNe = (sections: SectionText[], ne: SectionText[]): ProductSection[] =>
+  sections.map((s, i) => ({ ...s, items: [...s.items], ne: ne[i] ? { ...ne[i], items: [...ne[i].items] } : undefined }));
 
 // Seed content, taken from the site's original hard-coded copy. Used until
 // an admin first saves a section, and to fill any field missing from the
@@ -36,6 +54,7 @@ export const DEFAULT_CONTENT: SiteContent = {
         "Together, we envision a cleaner and more sustainable Nepal, where innovation and responsibility go hand in hand.",
       ],
     },
+    ne: companyNe,
   },
   products: [
     {
@@ -49,8 +68,9 @@ export const DEFAULT_CONTENT: SiteContent = {
       image: homeProducts[0].imageSrc,
       imageAlt: homeProducts[0].imageAlt,
       applications: [...pyrolysisOilApplications],
-      specs: pyrolysisOilSpecs.map((s) => ({ ...s })),
-      sections: pyrolysisOilSections.map((s) => ({ ...s, items: [...s.items] })),
+      specs: withNe(pyrolysisOilSpecs, pyrolysisOilSpecsNe),
+      sections: sectionsWithNe(pyrolysisOilSections, pyrolysisOilSectionsNe),
+      ne: pyrolysisOilNe,
     },
     {
       slug: "fuel-char",
@@ -63,8 +83,9 @@ export const DEFAULT_CONTENT: SiteContent = {
       image: homeProducts[1].imageSrc,
       imageAlt: homeProducts[1].imageAlt,
       applications: [...fuelCharApplications],
-      specs: fuelCharSpecs.map((s) => ({ ...s })),
-      sections: fuelCharSections.map((s) => ({ ...s, items: [...s.items] })),
+      specs: withNe(fuelCharSpecs, fuelCharSpecsNe),
+      sections: sectionsWithNe(fuelCharSections, fuelCharSectionsNe),
+      ne: fuelCharNe,
     },
     {
       slug: "recovered-steel",
@@ -77,8 +98,9 @@ export const DEFAULT_CONTENT: SiteContent = {
       image: homeProducts[2].imageSrc,
       imageAlt: homeProducts[2].imageAlt,
       applications: [...steelApplications],
-      specs: steelSpecs.map((s) => ({ ...s })),
-      sections: recoveredSteelSections.map((s) => ({ ...s, items: [...s.items] })),
+      specs: withNe(steelSpecs, steelSpecsNe),
+      sections: sectionsWithNe(recoveredSteelSections, recoveredSteelSectionsNe),
+      ne: recoveredSteelNe,
     },
   ],
 };

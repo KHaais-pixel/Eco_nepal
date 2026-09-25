@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { processSteps } from "@/lib/site-data";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { fmt } from "@/i18n/config";
 
 // ---- Tunables --------------------------------------------------------------
 const VH_PER_STEP = 90; // scroll length per step while the plant is on screen
@@ -11,7 +12,6 @@ const SMOOTH = 0.35; // seconds the scene takes to catch up with the scroll (mou
 const SMOOTH_TOUCH = 0.12; // touch scrolling is already smooth; extra lag feels rubbery
 const N = processSteps.length; // 7
 
-const SHORT = ["Collection", "Preparation", "Pyrolysis", "Oil Recovery", "Solid Recovery", "Steel Recovery", "Quality & Dispatch"];
 // Camera [x, y, zoom] framing each step on the 960×560 plant drawing.
 const CAM: [number, number, number][] = [
   [175, 205, 1.5],
@@ -98,7 +98,16 @@ const LABEL = { fontSize: 11, letterSpacing: 1.5, fill: "#8a8a84", textAnchor: "
  * with a single GSAP quickTo. Only transforms, opacity, fills and a few
  * geometry attributes change.
  */
-export default function PlantScrub() {
+export type PlantLabels = {
+  steps: { number: string; title: string; description: string }[];
+  short: string[];
+  stepLabel: string;
+  sceneAria: string;
+  diagram: { hopper: string; conveyor: string; reactor: string; vapour: string; condenser: string; oil: string; carbon: string; magnet: string; steel: string };
+};
+
+export default function PlantScrub({ labels }: { labels: PlantLabels }) {
+  const steps = labels.steps;
   const sectionRef = useRef<HTMLElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const camRef = useRef<SVGGElement>(null);
@@ -153,7 +162,7 @@ export default function PlantScrub() {
 
       // Header: step, per-step progress segments, temperature.
       if (step !== lastStep && stepLabelRef.current) {
-        stepLabelRef.current.textContent = `STEP ${String(step + 1).padStart(2, "0")} / ${String(N).padStart(2, "0")}`;
+        stepLabelRef.current.textContent = fmt(labels.stepLabel, { n: String(step + 1).padStart(2, "0"), total: String(N).padStart(2, "0") });
       }
       if (temp !== lastTemp && tempLabelRef.current) tempLabelRef.current.textContent = `${temp}°C`;
       lastTemp = temp;
@@ -342,13 +351,13 @@ export default function PlantScrub() {
   return (
     <section
       ref={sectionRef}
-      aria-label="How the process works, step by step"
+      aria-label={labels.sceneAria}
       className="relative"
       style={{ height: `${N * VH_PER_STEP + 100}svh` }}
     >
       {/* Screen readers get the plain steps; the animated scene is decorative. */}
       <ol className="sr-only">
-        {processSteps.map((s) => (
+        {steps.map((s) => (
           <li key={s.number}>
             {s.title}: {s.description}
           </li>
@@ -360,9 +369,9 @@ export default function PlantScrub() {
           {/* Stage */}
           <div className="flex min-w-0 flex-[1.45_1_380px] flex-col gap-3 [--reserve:360px] lg:[--reserve:230px]">
             <div className="font-mono-label flex items-center justify-between gap-4 text-[12px] tracking-[0.15em] text-[var(--accent)]">
-              <span ref={stepLabelRef}>STEP 01 / 07</span>
+              <span ref={stepLabelRef}>{fmt(labels.stepLabel, { n: "01", total: String(N).padStart(2, "0") })}</span>
               <div className="flex max-w-[260px] flex-1 gap-1">
-                {processSteps.map((s, k) => (
+                {steps.map((s, k) => (
                   <div key={s.number} className="h-[3px] flex-1 overflow-hidden rounded-full bg-ink/10">
                     <div ref={setSeg(k)} className="h-full origin-left bg-[var(--accent)]" style={{ transform: "scaleX(0)" }} />
                   </div>
@@ -408,8 +417,8 @@ export default function PlantScrub() {
                     {range(16).map((i) => (
                       <rect key={i} ref={setShred(i)} x="-5" y="-3.5" width="10" height="7" rx="1.5" fill="#2b2b2b" opacity="0" />
                     ))}
-                    <text x="160" y="136" {...LABEL}>HOPPER + SHREDDER</text>
-                    <text x="258" y="330" {...LABEL}>FEED CONVEYOR</text>
+                    <text x="160" y="136" {...LABEL}>{labels.diagram.hopper}</text>
+                    <text x="258" y="330" {...LABEL}>{labels.diagram.conveyor}</text>
                   </g>
 
                   {/* Sealed reactor */}
@@ -427,7 +436,7 @@ export default function PlantScrub() {
                       <rect key={i} ref={setFlame(i)} x={372 + i * 32} y="420" width="16" height="0" rx="8" fill="#e07a2e" opacity="0" />
                     ))}
                     <line x1="350" y1="424" x2="560" y2="424" stroke="#2a2a2a" strokeWidth="3" strokeLinecap="round" />
-                    <text x="455" y="160" {...LABEL}>SEALED REACTOR · NO O₂</text>
+                    <text x="455" y="160" {...LABEL}>{labels.diagram.reactor}</text>
                   </g>
 
                   {/* Vapour line, condenser, oil tank */}
@@ -447,9 +456,9 @@ export default function PlantScrub() {
                       <rect ref={node("oil")} x="642" y="418" width="116" height="0" fill="#dfa84f" />
                     </g>
                     <rect x="640" y="300" width="120" height="120" rx="12" fill="none" stroke="#2a2a2a" strokeWidth="3" />
-                    <text x="700" y="96" {...LABEL}>VAPOUR LINE</text>
-                    <text x="785" y="210" {...LABEL} textAnchor="start">CONDENSER</text>
-                    <text x="785" y="365" {...LABEL} textAnchor="start">PYROLYSIS OIL</text>
+                    <text x="700" y="96" {...LABEL}>{labels.diagram.vapour}</text>
+                    <text x="785" y="210" {...LABEL} textAnchor="start">{labels.diagram.condenser}</text>
+                    <text x="785" y="365" {...LABEL} textAnchor="start">{labels.diagram.oil}</text>
                   </g>
 
                   {/* Carbon solids */}
@@ -460,7 +469,7 @@ export default function PlantScrub() {
                     ))}
                     <path ref={node("pile")} d="M198 470 Q250 470 302 470 Z" fill="#2f2f2d" />
                     <path d="M195 384 V470 H305 V384" fill="none" stroke="#2a2a2a" strokeWidth="3" strokeLinejoin="round" />
-                    <text x="250" y="498" {...LABEL}>CARBON SOLIDS</text>
+                    <text x="250" y="498" {...LABEL}>{labels.diagram.carbon}</text>
                   </g>
 
                   {/* Steel: magnet + bale */}
@@ -472,8 +481,8 @@ export default function PlantScrub() {
                     ))}
                     <path ref={node("magnet")} d="M836 330 h52 v36 h-15 v-20 h-22 v20 h-15 z" fill="#8a8a84" />
                     <rect ref={node("bale")} x="835" y="466" width="52" height="0" rx="3" fill="#7d8b96" />
-                    <text x="861" y="318" {...LABEL}>MAGNET</text>
-                    <text x="861" y="498" {...LABEL}>STEEL</text>
+                    <text x="861" y="318" {...LABEL}>{labels.diagram.magnet}</text>
+                    <text x="861" y="498" {...LABEL}>{labels.diagram.steel}</text>
                   </g>
 
                   {/* Quality scan + checks */}
@@ -490,7 +499,7 @@ export default function PlantScrub() {
 
             {/* Rolling step titles */}
             <div className="relative h-[clamp(40px,4.4vw,68px)]">
-              {SHORT.map((text, k) => (
+              {labels.short.map((text, k) => (
                 <div
                   key={text}
                   ref={setTitle(k)}
@@ -505,7 +514,7 @@ export default function PlantScrub() {
 
           {/* Step list: on narrow screens only the active step shows. */}
           <ol className="min-w-0 max-w-[560px] flex-[1_1_280px] border-b border-ink/10">
-            {processSteps.map((s, k) => (
+            {steps.map((s, k) => (
               <li
                 key={s.number}
                 ref={setItem(k)}

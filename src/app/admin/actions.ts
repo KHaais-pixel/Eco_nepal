@@ -118,6 +118,17 @@ export async function saveCompany(_prev: ActionState, form: FormData): Promise<A
           quote: text(form, "chairmanQuote", 600),
           paragraphs: paragraphs(form, "chairmanMessage"),
         },
+        ne: {
+          legalName: text(form, "legalNameNe"),
+          shortName: text(form, "shortNameNe"),
+          address: text(form, "addressNe"),
+          chairman: {
+            name: text(form, "chairmanNameNe"),
+            title: text(form, "chairmanTitleNe"),
+            quote: text(form, "chairmanQuoteNe", 600),
+            paragraphs: paragraphs(form, "chairmanMessageNe"),
+          },
+        },
       };
     });
     refreshSite();
@@ -137,15 +148,21 @@ export async function saveProduct(_prev: ActionState, form: FormData): Promise<A
     const methods = form.getAll("specMethod");
     const units = form.getAll("specUnit");
     const values = form.getAll("specValue");
+    const propertiesNe = form.getAll("specPropertyNe");
+    const valuesNe = form.getAll("specValueNe");
     const specs = properties
       .map((p, i) => {
         const method = String(methods[i] ?? "").trim().slice(0, 60);
         const unit = String(units[i] ?? "").trim().slice(0, 30);
+        const propertyNe = String(propertiesNe[i] ?? "").trim().slice(0, 120);
+        const valueNe = String(valuesNe[i] ?? "").trim().slice(0, 200);
         return {
           property: String(p).trim().slice(0, 80),
           value: String(values[i] ?? "").trim().slice(0, 200),
           ...(method ? { method } : {}),
           ...(unit ? { unit } : {}),
+          ...(propertyNe ? { propertyNe } : {}),
+          ...(valueNe ? { valueNe } : {}),
         };
       })
       .filter((s) => s.property && s.value)
@@ -153,18 +170,26 @@ export async function saveProduct(_prev: ActionState, form: FormData): Promise<A
 
     const bodies = form.getAll("sectionBody");
     const itemLists = form.getAll("sectionItems");
+    const titlesNe = form.getAll("sectionTitleNe");
+    const bodiesNe = form.getAll("sectionBodyNe");
+    const itemListsNe = form.getAll("sectionItemsNe");
+    const itemsOf = (raw: FormDataEntryValue | undefined) =>
+      String(raw ?? "")
+        .split(/\r?\n/)
+        .map((l) => l.trim().slice(0, 300))
+        .filter(Boolean)
+        .slice(0, 40);
     const sections = form
       .getAll("sectionTitle")
       .map((t, i) => {
         const body = String(bodies[i] ?? "").trim().slice(0, 4000);
+        const titleNe = String(titlesNe[i] ?? "").trim().slice(0, 160);
+        const bodyNe = String(bodiesNe[i] ?? "").trim().slice(0, 4000);
         return {
           title: String(t).trim().slice(0, 120),
           ...(body ? { body } : {}),
-          items: String(itemLists[i] ?? "")
-            .split(/\r?\n/)
-            .map((l) => l.trim().slice(0, 300))
-            .filter(Boolean)
-            .slice(0, 40),
+          items: itemsOf(itemLists[i]),
+          ...(titleNe ? { ne: { title: titleNe, ...(bodyNe ? { body: bodyNe } : {}), items: itemsOf(itemListsNe[i]) } } : {}),
         };
       })
       .filter((s) => s.title)
@@ -188,6 +213,14 @@ export async function saveProduct(_prev: ActionState, form: FormData): Promise<A
         applications: lines(form, "applications", 30, 80),
         specs,
         sections,
+        ne: {
+          name: text(form, "nameNe", 80),
+          tag: text(form, "tagNe", 40),
+          short: text(form, "shortNe", 200),
+          description: text(form, "descriptionNe", 1500),
+          imageAlt: text(form, "imageAltNe", 200),
+          applications: lines(form, "applicationsNe", 30, 80),
+        },
         ...(uploaded ? { image: uploaded } : {}),
       });
     });

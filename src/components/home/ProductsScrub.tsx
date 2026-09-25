@@ -9,6 +9,7 @@ import { useGSAP } from "@gsap/react";
 import ImageBlock from "@/components/ImageBlock";
 import TyreGraphic from "./TyreGraphic";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useLocale } from "@/i18n/client";
 
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, ScrambleTextPlugin);
 
@@ -61,7 +62,10 @@ export type HomeProduct = {
   imageAlt: string;
 };
 
-export default function ProductsScrub({ products: homeProducts }: { products: HomeProduct[] }) {
+export type ProduceLabels = { title: string; allProducts: string; oil: string; char: string; steel: string };
+
+export default function ProductsScrub({ products: homeProducts, labels }: { products: HomeProduct[]; labels: ProduceLabels }) {
+  const { href } = useLocale();
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -290,11 +294,11 @@ export default function ProductsScrub({ products: homeProducts }: { products: Ho
             ref={headingRef}
             className="font-display text-[clamp(40px,5vw,72px)] font-semibold leading-none tracking-[-0.02em] text-ink"
           >
-            What we produce
+            {labels.title}
           </h2>
         </div>
-        <a href="/products" className="-my-3 inline-block py-3 text-[15px] font-semibold text-forest hover:text-leaf">
-          All products →
+        <a href={href("/products")} className="-my-3 inline-block py-3 text-[15px] font-semibold text-forest hover:text-leaf">
+          {labels.allProducts}
         </a>
       </div>
 
@@ -313,7 +317,7 @@ export default function ProductsScrub({ products: homeProducts }: { products: Ho
         <TyreGraphic ref={tyreRef} className="absolute inset-0 h-full w-full opacity-0" />
 
         <div className={particleWrap} ref={oilRef}>
-          <ParticleBadge color={PARTICLE_COLORS.oil} label="OIL">
+          <ParticleBadge color={PARTICLE_COLORS.oil} label={labels.oil}>
             <svg viewBox="0 0 24 24" className="h-[60px] w-[60px]">
               <path
                 d="M12 2C12 2 5 11 5 15.5C5 19.09 8.13 22 12 22C15.87 22 19 19.09 19 15.5C19 11 12 2 12 2Z"
@@ -325,7 +329,7 @@ export default function ProductsScrub({ products: homeProducts }: { products: Ho
         </div>
 
         <div className={particleWrap} ref={charRef}>
-          <ParticleBadge color={PARTICLE_COLORS.char} label="CHAR">
+          <ParticleBadge color={PARTICLE_COLORS.char} label={labels.char}>
             <svg viewBox="0 0 32 32" className="h-[64px] w-[64px]">
               {[
                 [6, 8],
@@ -345,7 +349,7 @@ export default function ProductsScrub({ products: homeProducts }: { products: Ho
         </div>
 
         <div className={particleWrap} ref={steelRef}>
-          <ParticleBadge color={PARTICLE_COLORS.steel} label="STEEL">
+          <ParticleBadge color={PARTICLE_COLORS.steel} label={labels.steel}>
             <svg viewBox="0 0 40 32" className="h-[54px] w-[68px]" fill="none">
               {["M2 16C10 4 20 4 28 16", "M6 24C14 12 24 12 32 24", "M10 8C16 -1 24 -1 30 8"].map((d, idx) => (
                 <path

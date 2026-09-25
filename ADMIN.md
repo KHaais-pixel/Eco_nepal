@@ -87,3 +87,12 @@ Run a **single** instance of the app. Saves are coordinated inside one Node proc
 - Sign-in is limited to 5 attempts per 15 minutes per IP address.
 - Uploads must be real JPEG, PNG or WebP files. The server checks the file contents, not just the file extension. SVG is not accepted.
 - All `/admin` pages send `noindex`, so search engines won't list them.
+
+## Nepali (नेपाली) content
+
+The public site is bilingual: English at the normal addresses (`/about`) and Nepali under `/ne` (`/ne/about`). Visitors switch with the language button in the header.
+
+- Fixed text (menus, headings, buttons, the Process, Sustainability, FAQ and Lab Reports pages) is translated in the code and needs no admin work.
+- Editable text has a **नेपाली · Nepali** section in the admin editor next to the English fields: company name, address and the chairman's message under **Company info**, and each product's name, tag, summary, description, applications, page sections and specification rows (a Nepali line under every row) under **Products**.
+- If a Nepali field is left empty, the English text is shown on the Nepali page for that field, so nothing is ever blank.
+- Phone numbers, email, website, test methods (ASTM codes), units and figures are shared by both languages.

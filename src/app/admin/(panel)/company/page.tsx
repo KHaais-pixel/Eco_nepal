@@ -67,6 +67,40 @@ export default async function CompanyAdminPage() {
             </div>
           </section>
 
+          <section className="grid grid-cols-1 gap-5 border-t border-ink/[0.08] pt-8 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <h2 className="font-display text-lg font-semibold">नेपाली · Nepali text</h2>
+              <p className="mt-1 text-xs text-muted-3">Shown on the Nepali version of the site. Phone, email and website are shared.</p>
+            </div>
+            <Field label="Legal company name (नेपाली)">
+              <TextInput name="legalNameNe" defaultValue={company.ne.legalName} lang="ne" />
+            </Field>
+            <Field label="Short name (नेपाली)">
+              <TextInput name="shortNameNe" defaultValue={company.ne.shortName} lang="ne" />
+            </Field>
+            <div className="sm:col-span-2">
+              <Field label="Address (नेपाली)">
+                <TextInput name="addressNe" defaultValue={company.ne.address} lang="ne" />
+              </Field>
+            </div>
+            <Field label="Chairman's name (नेपाली)">
+              <TextInput name="chairmanNameNe" defaultValue={company.ne.chairman.name} lang="ne" />
+            </Field>
+            <Field label="Chairman's title (नेपाली)">
+              <TextInput name="chairmanTitleNe" defaultValue={company.ne.chairman.title} lang="ne" />
+            </Field>
+            <div className="sm:col-span-2">
+              <Field label="Highlighted quote (नेपाली)">
+                <TextArea name="chairmanQuoteNe" defaultValue={company.ne.chairman.quote} rows={3} lang="ne" />
+              </Field>
+            </div>
+            <div className="sm:col-span-2">
+              <Field label="Message (नेपाली)" hint="Leave a blank line between paragraphs.">
+                <TextArea name="chairmanMessageNe" defaultValue={company.ne.chairman.paragraphs.join("\n\n")} rows={10} lang="ne" />
+              </Field>
+            </div>
+          </section>
+
           <div className="border-t border-ink/[0.08] pt-6">
             <SubmitButton>Save company info</SubmitButton>
           </div>

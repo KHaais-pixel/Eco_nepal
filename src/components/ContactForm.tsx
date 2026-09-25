@@ -1,43 +1,39 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { enquiryRoles } from "@/lib/site-data";
-import { submitEnquiry, type EnquiryState } from "@/app/(site)/contact/actions";
+import { useLocale } from "@/i18n/client";
+import type { Dictionary } from "@/i18n/dictionaries/en";
+import { submitEnquiry, type EnquiryState } from "@/app/[lang]/contact/actions";
+
+type FormLabels = Dictionary["contact"]["form"];
 
 const initialState: EnquiryState = { status: "idle" };
 
 const fieldClass =
   "border-0 border-b border-ink/25 bg-transparent py-2.5 text-base outline-none placeholder:text-muted-4 focus:border-forest";
 
-export default function ContactForm() {
+export default function ContactForm({ labels }: { labels: FormLabels }) {
   // Bumping the key remounts the form, resetting both the fields and the
   // server action state for "Submit another enquiry".
   const [formKey, setFormKey] = useState(0);
-  return <EnquiryForm key={formKey} onReset={() => setFormKey((k) => k + 1)} />;
+  return <EnquiryForm key={formKey} labels={labels} onReset={() => setFormKey((k) => k + 1)} />;
 }
 
-function EnquiryForm({ onReset }: { onReset: () => void }) {
+function EnquiryForm({ labels, onReset }: { labels: FormLabels; onReset: () => void }) {
+  const { locale } = useLocale();
   const [role, setRole] = useState(0);
   const [state, formAction, pending] = useActionState(submitEnquiry, initialState);
-  const activeRole = enquiryRoles[role];
+  const activeRole = labels.roles[role];
   const errors = state.errors ?? {};
   const values = state.values;
 
   if (state.status === "success") {
     return (
       <div role="status" className="py-10">
-        <div className="mb-4 font-display text-[48px] font-medium leading-none text-ink">
-          Thank you.
-        </div>
-        <p className="text-base leading-[1.6] text-muted-1">
-          Your enquiry has been received. Our team will get back to you shortly.
-        </p>
-        <button
-          type="button"
-          onClick={onReset}
-          className="mt-6 text-sm font-semibold text-forest hover:text-leaf"
-        >
-          Submit another enquiry
+        <div className="mb-4 font-display text-[48px] font-medium leading-none text-ink">{labels.thanks}</div>
+        <p className="text-base leading-[1.6] text-muted-1">{labels.thanksText}</p>
+        <button type="button" onClick={onReset} className="mt-6 text-sm font-semibold text-forest hover:text-leaf">
+          {labels.another}
         </button>
       </div>
     );
@@ -45,12 +41,13 @@ function EnquiryForm({ onReset }: { onReset: () => void }) {
 
   return (
     <form action={formAction} noValidate>
-      <input type="hidden" name="role" value={activeRole.label} />
-      <div className="font-mono-label mb-3 text-[11px] text-muted-3">I AM A</div>
+      <input type="hidden" name="lang" value={locale} />
+      <input type="hidden" name="role" value={activeRole.key} />
+      <div className="font-mono-label mb-3 text-[11px] text-muted-3">{labels.iAmA}</div>
       <div className="mb-8 flex flex-wrap gap-2">
-        {enquiryRoles.map((r, i) => (
+        {labels.roles.map((r, i) => (
           <button
-            key={r.label}
+            key={r.key}
             type="button"
             onClick={() => setRole(i)}
             aria-pressed={role === i}
@@ -71,19 +68,19 @@ function EnquiryForm({ onReset }: { onReset: () => void }) {
 
       <div className="flex flex-col gap-6">
         <label className="flex flex-col gap-2 text-[13px] font-semibold">
-          Full name
-          <input name="fullName" type="text" autoComplete="name" defaultValue={values?.fullName} placeholder="Your name" className={fieldClass} />
+          {labels.fullName}
+          <input name="fullName" type="text" autoComplete="name" defaultValue={values?.fullName} placeholder={labels.namePlaceholder} className={fieldClass} />
           {errors.fullName && <span className="text-xs font-normal text-red-600">{errors.fullName}</span>}
         </label>
 
         <label className="flex flex-col gap-2 text-[13px] font-semibold">
-          Company
-          <input name="company" type="text" autoComplete="organization" defaultValue={values?.company} placeholder="Company name" className={fieldClass} />
+          {labels.company}
+          <input name="company" type="text" autoComplete="organization" defaultValue={values?.company} placeholder={labels.companyPlaceholder} className={fieldClass} />
         </label>
 
         <label className="flex flex-col gap-2 text-[13px] font-semibold">
-          Email or phone
-          <input name="contact" type="text" defaultValue={values?.contact} placeholder="How we reach you" className={fieldClass} />
+          {labels.contact}
+          <input name="contact" type="text" defaultValue={values?.contact} placeholder={labels.contactPlaceholder} className={fieldClass} />
           {errors.contact && <span className="text-xs font-normal text-red-600">{errors.contact}</span>}
         </label>
 
@@ -101,7 +98,7 @@ function EnquiryForm({ onReset }: { onReset: () => void }) {
 
         {/* Honeypot field for basic spam protection — hidden from real users */}
         <div className="hidden" aria-hidden="true">
-          <label htmlFor="website">Leave this field empty</label>
+          <label htmlFor="website">{labels.honeypot}</label>
           <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
         </div>
 
@@ -112,8 +109,7 @@ function EnquiryForm({ onReset }: { onReset: () => void }) {
             defaultChecked={values?.consent}
             className="mt-1 h-4 w-4 rounded border-ink/25 text-forest focus:ring-leaf/40"
           />
-          I consent to Eco Nepal Energy Industries Pvt. Ltd. handling the information I
-          have submitted in order to respond to my enquiry.
+          {labels.consent}
         </label>
         {errors.consent && <span className="-mt-3 text-xs text-red-600">{errors.consent}</span>}
 
@@ -122,7 +118,7 @@ function EnquiryForm({ onReset }: { onReset: () => void }) {
           disabled={pending}
           className="mt-2 inline-flex w-fit items-center justify-center rounded-full bg-forest px-7 py-[15px] text-[15px] font-semibold text-cream transition-colors hover:bg-leaf disabled:opacity-60"
         >
-          {pending ? "Sending…" : "Send enquiry"}
+          {pending ? labels.sending : labels.send}
         </button>
       </div>
     </form>

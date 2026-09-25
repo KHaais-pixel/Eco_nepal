@@ -55,6 +55,34 @@ export default async function EditProductPage({ params }: { params: Promise<{ sl
             </div>
           </section>
 
+          <section className="grid grid-cols-1 gap-5 border-t border-ink/[0.08] pt-8 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <p className="text-[13px] font-semibold">नेपाली · Nepali text</p>
+              <p className="mt-1 text-xs text-muted-3">Shown on the Nepali version of the site. Leave a field empty to show the English text there.</p>
+            </div>
+            <Field label="Name (नेपाली)">
+              <TextInput name="nameNe" defaultValue={product.ne.name} maxLength={80} lang="ne" />
+            </Field>
+            <Field label="Tag (नेपाली)">
+              <TextInput name="tagNe" defaultValue={product.ne.tag} maxLength={40} lang="ne" />
+            </Field>
+            <div className="sm:col-span-2">
+              <Field label="Short summary (नेपाली)">
+                <TextInput name="shortNe" defaultValue={product.ne.short} maxLength={200} lang="ne" />
+              </Field>
+            </div>
+            <div className="sm:col-span-2">
+              <Field label="Description (नेपाली)">
+                <TextArea name="descriptionNe" defaultValue={product.ne.description} rows={4} maxLength={1500} lang="ne" />
+              </Field>
+            </div>
+            <div className="sm:col-span-2">
+              <Field label="Image description (नेपाली)">
+                <TextInput name="imageAltNe" defaultValue={product.ne.imageAlt} maxLength={200} lang="ne" />
+              </Field>
+            </div>
+          </section>
+
           <section className="grid grid-cols-1 gap-5 border-t border-ink/[0.08] pt-8 sm:grid-cols-[220px_1fr]">
             <Thumb src={product.image} alt={product.imageAlt} className="aspect-square" />
             <div className="flex flex-col gap-5">
@@ -67,9 +95,12 @@ export default async function EditProductPage({ params }: { params: Promise<{ sl
             </div>
           </section>
 
-          <section className="border-t border-ink/[0.08] pt-8">
+          <section className="grid grid-cols-1 gap-5 border-t border-ink/[0.08] pt-8 sm:grid-cols-2">
             <Field label="Applications" hint="One per line. Shown on the Products overview page.">
               <TextArea name="applications" defaultValue={product.applications.join("\n")} rows={6} />
+            </Field>
+            <Field label="Applications (नेपाली)" hint="One per line.">
+              <TextArea name="applicationsNe" defaultValue={product.ne.applications.join("\n")} rows={6} lang="ne" />
             </Field>
           </section>
 

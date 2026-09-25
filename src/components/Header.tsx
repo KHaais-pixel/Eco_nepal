@@ -4,12 +4,50 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { ChevronDown, Menu, X } from "lucide-react";
-import { navItems } from "@/lib/site-data";
+import { ChevronDown, Languages, Menu, X } from "lucide-react";
+import { useLocale } from "@/i18n/client";
+import { localizePath, parsePath, type Locale } from "@/i18n/config";
 import Button from "./Button";
 
-export default function Header() {
+export type HeaderLabels = {
+  brandName: string;
+  brandSub: string;
+  homeAria: string;
+  openMenu: string;
+  closeMenu: string;
+  requestQuote: string;
+  allProducts: string;
+  switchTo: string;
+  switchToAria: string;
+  items: { label: string; href: string; children?: { label: string; href: string; blurb: string }[] }[];
+};
+
+const OTHER: Record<Locale, Locale> = { en: "ne", ne: "en" };
+
+/** Same page in the other language, e.g. /about ⇄ /ne/about. */
+function LanguageToggle({ labels, className = "", onClick }: { labels: HeaderLabels; className?: string; onClick?: () => void }) {
+  const { locale } = useLocale();
+  const { path } = parsePath(usePathname());
+  const other = OTHER[locale];
+  return (
+    <Link
+      href={localizePath(other, path)}
+      hrefLang={other}
+      lang={other}
+      aria-label={labels.switchToAria}
+      onClick={onClick}
+      className={`inline-flex items-center gap-1.5 rounded-full border border-ink/15 px-3 py-1.5 text-[13px] font-semibold text-ink transition-colors hover:border-forest hover:text-forest ${className}`}
+    >
+      <Languages className="h-3.5 w-3.5" aria-hidden="true" />
+      {labels.switchTo}
+    </Link>
+  );
+}
+
+export default function Header({ labels }: { labels: HeaderLabels }) {
   const pathname = usePathname();
+  const { href } = useLocale();
+  const { path } = parsePath(pathname);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
   const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
@@ -19,22 +57,21 @@ export default function Header() {
     setMobileProductsOpen(false);
   };
 
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+  const isActive = (target: string) => (target === "/" ? path === "/" : path.startsWith(target));
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-ink/[0.08] bg-cream/[0.96] lg:bg-cream/[0.82] lg:backdrop-blur-md">
       <div className="mx-auto flex h-[72px] w-full max-w-[1320px] items-center justify-between gap-6 px-5 sm:px-8">
-        <Link href="/" className="flex shrink-0 items-center gap-3" aria-label="Eco Nepal Energy home">
+        <Link href={href("/")} className="flex shrink-0 items-center gap-3" aria-label={labels.homeAria}>
           <Image src="/brand/logo-mark.png" alt="" width={240} height={254} priority className="h-[46px] w-auto shrink-0" />
           <span className="flex flex-col leading-[1.05]">
-            <span className="text-[15px] font-bold tracking-tight text-ink">Eco Nepal Energy</span>
-            <span className="font-mono-label text-[10px] text-muted-3">INDUSTRIES PVT. LTD.</span>
+            <span className="text-[15px] font-bold tracking-tight text-ink">{labels.brandName}</span>
+            <span className="font-mono-label text-[10px] text-muted-3">{labels.brandSub}</span>
           </span>
         </Link>
 
         <nav className="hidden items-center gap-5 lg:flex xl:gap-7" aria-label="Primary">
-          {navItems.map((item) =>
+          {labels.items.map((item) =>
             item.children ? (
               <div
                 key={item.href}
@@ -58,7 +95,7 @@ export default function Header() {
                     {item.children.map((child) => (
                       <Link
                         key={child.href}
-                        href={child.href}
+                        href={href(child.href)}
                         className="block rounded-xl px-3 py-2.5 text-sm hover:bg-stone"
                       >
                         <span className="block font-semibold text-ink">{child.label}</span>
@@ -66,10 +103,10 @@ export default function Header() {
                       </Link>
                     ))}
                     <Link
-                      href="/products"
+                      href={href("/products")}
                       className="mt-1 block rounded-xl px-3 py-2.5 text-sm font-semibold text-forest hover:bg-stone"
                     >
-                      All products →
+                      {labels.allProducts}
                     </Link>
                   </div>
                 )}
@@ -77,7 +114,7 @@ export default function Header() {
             ) : (
               <Link
                 key={item.href}
-                href={item.href}
+                href={href(item.href)}
                 className={`border-b-[1.5px] py-1.5 text-sm font-medium ${
                   isActive(item.href) ? "border-leaf text-ink" : "border-transparent text-muted-3"
                 }`}
@@ -87,19 +124,23 @@ export default function Header() {
               </Link>
             )
           )}
-          <Button href="/contact" variant="forest" className="px-[18px] py-2.5 text-sm">
-            Request a quote
+          <LanguageToggle labels={labels} />
+          <Button href={href("/contact")} variant="forest" className="px-[18px] py-2.5 text-sm">
+            {labels.requestQuote}
           </Button>
         </nav>
 
-        <button
-          className="flex h-10 w-10 items-center justify-center text-ink lg:hidden"
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
-          aria-expanded={mobileOpen}
-          onClick={() => setMobileOpen((v) => !v)}
-        >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="flex items-center gap-2 lg:hidden">
+          <LanguageToggle labels={labels} />
+          <button
+            className="flex h-10 w-10 items-center justify-center text-ink"
+            aria-label={mobileOpen ? labels.closeMenu : labels.openMenu}
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen((v) => !v)}
+          >
+            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       <div
@@ -108,7 +149,7 @@ export default function Header() {
         }`}
       >
         <nav className="space-y-1 border-t border-ink/[0.08] bg-cream px-5 py-4" aria-label="Mobile">
-          {navItems.map((item) =>
+          {labels.items.map((item) =>
             item.children ? (
               <div key={item.href}>
                 <button
@@ -129,7 +170,7 @@ export default function Header() {
                   {item.children.map((child) => (
                     <Link
                       key={child.href}
-                      href={child.href}
+                      href={href(child.href)}
                       onClick={closeMobileMenu}
                       className="block py-2.5 text-sm text-muted-3 hover:text-forest"
                     >
@@ -141,7 +182,7 @@ export default function Header() {
             ) : (
               <Link
                 key={item.href}
-                href={item.href}
+                href={href(item.href)}
                 onClick={closeMobileMenu}
                 className="block py-2.5 text-sm font-medium text-ink hover:text-forest"
               >
@@ -150,8 +191,8 @@ export default function Header() {
             )
           )}
           <div className="pt-3">
-            <Button href="/contact" variant="forest" className="w-full" onClick={closeMobileMenu}>
-              Request a quote
+            <Button href={href("/contact")} variant="forest" className="w-full" onClick={closeMobileMenu}>
+              {labels.requestQuote}
             </Button>
           </div>
         </nav>

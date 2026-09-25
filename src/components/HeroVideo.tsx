@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
-export default function HeroVideo() {
+export default function HeroVideo({ labels }: { labels: { aria: string; mute: string; unmute: string } }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [visible, setVisible] = useState(false);
@@ -78,13 +78,13 @@ export default function HeroVideo() {
         playsInline
         autoPlay={!reducedMotion}
         controls={reducedMotion}
-        aria-label="Waste tyre recovery at the Eco Nepal Energy facility"
+        aria-label={labels.aria}
       />
       {!reducedMotion && (
         <button
           type="button"
           onClick={() => setMuted((m) => !m)}
-          aria-label={muted ? "Unmute video" : "Mute video"}
+          aria-label={muted ? labels.unmute : labels.mute}
           className="absolute bottom-5 right-5 flex h-10 w-10 items-center justify-center rounded-full bg-ink/60 text-cream backdrop-blur-sm transition-colors hover:bg-ink/80"
         >
           {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}

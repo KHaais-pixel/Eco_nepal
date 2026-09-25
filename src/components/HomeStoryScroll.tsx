@@ -2,14 +2,20 @@
 
 import { useRef } from "react";
 import { useScrollStoryProgress } from "@/hooks/useScrollStoryProgress";
-import { storyItems } from "@/lib/site-data";
 import ScrollScrubVideo from "./ScrollScrubVideo";
 import Eyebrow from "./Eyebrow";
 
-export default function HomeStoryScroll() {
+export type StoryLabels = {
+  eyebrow: string;
+  videoAria: string;
+  note: string;
+  items: { n: string; title: string; body: string; pct: string; pctLabel: string }[];
+};
+
+export default function HomeStoryScroll({ labels }: { labels: StoryLabels }) {
   const ref = useRef<HTMLElement>(null);
-  const { progressRef, activeIndex } = useScrollStoryProgress(ref, storyItems.length);
-  const active = storyItems[activeIndex];
+  const { progressRef, activeIndex } = useScrollStoryProgress(ref, labels.items.length);
+  const active = labels.items[activeIndex];
 
   return (
     <section
@@ -22,7 +28,7 @@ export default function HomeStoryScroll() {
           <ScrollScrubVideo
             src="/story-scrub/tyre-scrub.mp4"
             poster="/story-scrub/tyre-scrub-poster.jpg"
-            alt="Waste tyre recycling process, scrubbing through collection, pyrolysis oil, fuel char, and recovered steel"
+            alt={labels.videoAria}
             progressRef={progressRef}
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0" />
@@ -35,9 +41,9 @@ export default function HomeStoryScroll() {
         </div>
 
         <div>
-          <Eyebrow className="mb-3 md:mb-5">ONE TYRE · FOUR STAGES</Eyebrow>
+          <Eyebrow className="mb-3 md:mb-5">{labels.eyebrow}</Eyebrow>
           <div className="flex flex-col md:gap-1.5">
-            {storyItems.map((item, i) => {
+            {labels.items.map((item, i) => {
               const isActive = i === activeIndex;
               return (
                 <div
@@ -47,9 +53,7 @@ export default function HomeStoryScroll() {
                 >
                   <div className="flex items-baseline gap-4">
                     <span className="font-mono-label text-xs text-leaf">{item.n}</span>
-                    <span className="font-display text-[clamp(20px,3vw,34px)] leading-[1.05]">
-                      {item.title}
-                    </span>
+                    <span className="font-display text-[clamp(20px,3vw,34px)] leading-[1.05]">{item.title}</span>
                   </div>
                   {isActive && (
                     <p className="ml-9 mt-1.5 max-w-[420px] text-[14px] leading-[1.5] text-muted-2 md:mt-2 md:text-[15px] md:leading-[1.55]">
@@ -60,9 +64,7 @@ export default function HomeStoryScroll() {
               );
             })}
           </div>
-          <p className="font-mono-label mt-3 text-[11px] leading-[1.5] text-muted-4 md:mt-6">
-            Typical industry yields by weight. Plant-specific figures subject to confirmation.
-          </p>
+          <p className="font-mono-label mt-3 text-[11px] leading-[1.5] text-muted-4 md:mt-6">{labels.note}</p>
         </div>
       </div>
     </section>

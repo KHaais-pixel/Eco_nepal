@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { fmt } from "@/i18n/config";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -30,7 +31,23 @@ type Page = { src: string; alt: string };
 const face =
   "absolute inset-0 overflow-hidden bg-white [backface-visibility:hidden] [-webkit-backface-visibility:hidden]";
 
-export default function BrochureFlip({ pages, pdf }: { pages: Page[]; pdf: string }) {
+export type BrochureLabels = {
+  eyebrow: string;
+  title: { pre: string; em: string; post: string };
+  note: string;
+  download: string;
+  cover: string;
+  pages: string;
+  backCover: string;
+  page: string;
+  pageOf: string;
+  pageLabel: string;
+  prev: string;
+  next: string;
+  aria: string;
+};
+
+export default function BrochureFlip({ pages, pdf, labels }: { pages: Page[]; pdf: string; labels: BrochureLabels }) {
   const sectionRef = useRef<HTMLElement>(null);
   const bookRef = useRef<HTMLDivElement>(null);
   const shadowLeftRef = useRef<HTMLDivElement>(null);
@@ -57,10 +74,10 @@ export default function BrochureFlip({ pages, pdf }: { pages: Page[]; pdf: strin
 
   const stopLabels =
     layout === "book"
-      ? leaves.map((_, i) => (i === 0 ? "Cover" : `Pages ${i * 2}–${i * 2 + 1}`)).concat(
-          pages.length % 2 === 0 ? "Back cover" : `Page ${pages.length}`
+      ? leaves.map((_, i) => (i === 0 ? labels.cover : fmt(labels.pages, { a: i * 2, b: i * 2 + 1 }))).concat(
+          pages.length % 2 === 0 ? labels.backCover : fmt(labels.page, { n: pages.length })
         )
-      : pages.map((_, i) => `Page ${i + 1} of ${pages.length}`);
+      : pages.map((_, i) => fmt(labels.pageOf, { n: i + 1, total: pages.length }));
 
   useGSAP(
     () => {
@@ -217,17 +234,20 @@ export default function BrochureFlip({ pages, pdf }: { pages: Page[]; pdf: strin
   const header = (
     <div className="mb-[clamp(20px,3vh,36px)] flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
       <div>
-        <div className="font-mono-label mb-3 text-xs text-leaf">COMPANY BROCHURE</div>
+        <div className="font-mono-label mb-3 text-xs text-leaf">{labels.eyebrow}</div>
         <h2 className="font-display text-[clamp(34px,4.4vw,60px)] font-semibold leading-[0.98] tracking-[-0.02em] text-ink">
-          Flip through <em className="not-italic text-leaf">our story.</em>
+          {labels.title.pre}
+          <em className="not-italic text-leaf">{labels.title.em}</em>
+          {labels.title.post}
         </h2>
+        {labels.note && <p className="mt-2 text-sm text-muted-3">{labels.note}</p>}
       </div>
       <a
         href={pdf}
         download
         className="inline-flex items-center gap-2 rounded-full border border-ink/20 px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-forest hover:text-forest"
       >
-        <Download className="h-4 w-4" aria-hidden="true" /> Download PDF
+        <Download className="h-4 w-4" aria-hidden="true" /> {labels.download}
       </a>
     </div>
   );
@@ -235,7 +255,7 @@ export default function BrochureFlip({ pages, pdf }: { pages: Page[]; pdf: strin
   // Reduced motion: a plain, swipeable row of pages. No 3D, no pinning.
   if (reducedMotion) {
     return (
-      <section aria-label="Company brochure" className="mx-auto max-w-[1320px] px-5 py-[clamp(80px,10vw,140px)] sm:px-8">
+      <section aria-label={labels.aria} className="mx-auto max-w-[1320px] px-5 py-[clamp(80px,10vw,140px)] sm:px-8">
         {header}
         <ol className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 sm:-mx-8 sm:px-8">
           {pages.map((p, i) => (
@@ -243,7 +263,7 @@ export default function BrochureFlip({ pages, pdf }: { pages: Page[]; pdf: strin
               <div className="relative aspect-[595/842] overflow-hidden rounded-md bg-white shadow-[0_18px_40px_-20px_rgba(21,32,26,0.45)]">
                 <Image src={p.src} alt={p.alt} fill sizes="(min-width: 768px) 380px, 78vw" className="object-cover" />
               </div>
-              <p className="font-mono-label mt-3 text-[11px] text-muted-3">PAGE {i + 1}</p>
+              <p className="font-mono-label mt-3 text-[11px] text-muted-3">{fmt(labels.pageLabel, { n: i + 1 })}</p>
             </li>
           ))}
         </ol>
@@ -257,7 +277,7 @@ export default function BrochureFlip({ pages, pdf }: { pages: Page[]; pdf: strin
   return (
     <section
       ref={sectionRef}
-      aria-label="Company brochure"
+      aria-label={labels.aria}
       className="relative flex min-h-svh flex-col justify-center overflow-hidden bg-cream pb-6 pt-[92px]"
     >
       <div className="mx-auto w-full max-w-[1320px] px-5 sm:px-8">{header}</div>
@@ -364,7 +384,7 @@ export default function BrochureFlip({ pages, pdf }: { pages: Page[]; pdf: strin
           type="button"
           onClick={() => goTo(stop - 1)}
           disabled={atStart}
-          aria-label="Previous page"
+          aria-label={labels.prev}
           className="flex h-11 w-11 items-center justify-center rounded-full border border-ink/20 text-ink transition-colors hover:border-forest hover:text-forest disabled:opacity-30"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
@@ -388,7 +408,7 @@ export default function BrochureFlip({ pages, pdf }: { pages: Page[]; pdf: strin
           type="button"
           onClick={() => goTo(stop + 1)}
           disabled={atEnd}
-          aria-label="Next page"
+          aria-label={labels.next}
           className="flex h-11 w-11 items-center justify-center rounded-full border border-ink/20 text-ink transition-colors hover:border-forest hover:text-forest disabled:opacity-30"
         >
           <ArrowRight className="h-4 w-4" aria-hidden="true" />

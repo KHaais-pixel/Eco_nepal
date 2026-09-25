@@ -1,60 +1,58 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getCompany } from "@/lib/cms/content";
+import { getI18n } from "@/i18n/server";
 
 const year = new Date().getFullYear();
 
 export default async function Footer() {
-  const company = await getCompany();
+  const { locale, t, href } = await getI18n();
+  const company = await getCompany(locale);
+  const f = t.footer;
+  const linkClass = "py-2.5 text-cream/70 hover:text-cream";
   return (
     <footer className="bg-ink text-muted-4">
       <div className="mx-auto max-w-[1320px] px-5 pb-10 pt-16 sm:px-8">
         <div className="grid grid-cols-1 gap-10 border-b border-cream/10 pb-14 sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-3.5 lg:col-span-2">
             <Link
-              href="/"
-              aria-label="Eco Nepal Energy home"
+              href={href("/")}
+              aria-label={t.common.homeAria}
               className="mb-2 w-fit rounded-2xl bg-white p-4 shadow-[0_12px_30px_-18px_rgba(0,0,0,0.6)]"
             >
-              <Image
-                src="/brand/logo-full.png"
-                alt="Econepal Energy Industries Pvt. Ltd. — Reduce, Recycle, Regenerate"
-                width={640}
-                height={656}
-                className="h-auto w-[150px]"
-              />
+              <Image src="/brand/logo-full.png" alt={f.logoAlt} width={640} height={656} className="h-auto w-[150px]" />
             </Link>
-            <span className="text-[17px] font-bold text-cream">Eco Nepal Energy</span>
+            <span className="text-[17px] font-bold text-cream">{company.shortName}</span>
             <span className="text-sm leading-relaxed">
-              Waste tyre recycling &amp; pyrolysis.
+              {f.tagline}
               <br />
               {company.address}
             </span>
           </div>
 
           <div className="flex flex-col text-sm">
-            <span className="font-mono-label mb-1.5 text-[11px] text-leaf/80">PRODUCTS</span>
-            <Link href="/products/pyrolysis-oil" className="py-2.5 text-cream/70 hover:text-cream">Pyrolysis oil</Link>
-            <Link href="/products/fuel-char" className="py-2.5 text-cream/70 hover:text-cream">Fuel char</Link>
-            <Link href="/products/recovered-steel" className="py-2.5 text-cream/70 hover:text-cream">Recovered steel</Link>
+            <span className="font-mono-label mb-1.5 text-[11px] text-leaf/80">{f.products}</span>
+            <Link href={href("/products/pyrolysis-oil")} className={linkClass}>{f.pyrolysisOil}</Link>
+            <Link href={href("/products/fuel-char")} className={linkClass}>{f.fuelChar}</Link>
+            <Link href={href("/products/recovered-steel")} className={linkClass}>{f.recoveredSteel}</Link>
           </div>
 
           <div className="flex flex-col text-sm">
-            <span className="font-mono-label mb-1.5 text-[11px] text-leaf/80">COMPANY</span>
-            <Link href="/about" className="py-2.5 text-cream/70 hover:text-cream">About</Link>
-            <Link href="/process" className="py-2.5 text-cream/70 hover:text-cream">Process</Link>
-            <Link href="/sustainability" className="py-2.5 text-cream/70 hover:text-cream">Sustainability</Link>
-            <Link href="/faq" className="py-2.5 text-cream/70 hover:text-cream">FAQ</Link>
-            <Link href="/contact" className="py-2.5 text-cream/70 hover:text-cream">Contact</Link>
+            <span className="font-mono-label mb-1.5 text-[11px] text-leaf/80">{f.company}</span>
+            <Link href={href("/about")} className={linkClass}>{f.about}</Link>
+            <Link href={href("/process")} className={linkClass}>{f.process}</Link>
+            <Link href={href("/sustainability")} className={linkClass}>{f.sustainability}</Link>
+            <Link href={href("/faq")} className={linkClass}>{f.faq}</Link>
+            <Link href={href("/contact")} className={linkClass}>{f.contact}</Link>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-4 pt-7 text-[13px]">
           <span>© {year} {company.legalName}</span>
           <div className="flex flex-wrap gap-x-5 gap-y-0">
-            <a href={company.telephoneHref} className="py-2.5 text-cream/70 hover:text-cream">{company.telephone}</a>
-            <a href={`mailto:${company.email}`} className="py-2.5 text-cream/70 hover:text-cream">{company.email}</a>
-            <a href={company.websiteHref} target="_blank" rel="noopener noreferrer" className="py-2.5 text-cream/70 hover:text-cream">
+            <a href={company.telephoneHref} className={linkClass}>{company.telephone}</a>
+            <a href={`mailto:${company.email}`} className={linkClass}>{company.email}</a>
+            <a href={company.websiteHref} target="_blank" rel="noopener noreferrer" className={linkClass}>
               {company.website}
             </a>
           </div>

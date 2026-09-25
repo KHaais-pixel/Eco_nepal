@@ -31,7 +31,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 
 // Anything a crossing must not pass over.
 const CONTENT =
-  "h1,h2,h3,h4,h5,h6,p,span,img,video,canvas,svg,table,li,a,button,input,textarea,select,figure,blockquote";
+  "h1,h2,h3,h4,h5,h6,p,span,img,video,iframe,canvas,svg,table,li,a,button,input,textarea,select,figure,blockquote";
 
 /**
  * Page-y extent of a block's visible content. For a GSAP pin-spacer the

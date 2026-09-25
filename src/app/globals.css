@@ -133,3 +133,20 @@ select:focus-visible,
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Nepali pages: Devanagari font, and no tight tracking / line-height
+   (matras above and below the line need the room). next/font sets its
+   variables on <body>, so the override lives there too. */
+html[lang="ne"] body {
+  --font-display: var(--font-devanagari);
+  --font-body: var(--font-devanagari);
+  --font-label: var(--font-devanagari);
+}
+html[lang="ne"] :is(h1, h2, h3, .font-display) {
+  letter-spacing: 0 !important;
+  line-height: 1.18 !important;
+  font-stretch: 100%;
+}
+html[lang="ne"] .font-mono-label {
+  letter-spacing: 0.02em;
+}

@@ -47,10 +47,16 @@ function withDefaults(saved: Partial<SiteContent> | null): SiteContent {
       ...DEFAULT_CONTENT.company,
       ...saved.company,
       chairman: { ...DEFAULT_CONTENT.company.chairman, ...saved.company?.chairman },
+      ne: {
+        ...DEFAULT_CONTENT.company.ne,
+        ...saved.company?.ne,
+        chairman: { ...DEFAULT_CONTENT.company.ne.chairman, ...saved.company?.ne?.chairman },
+      },
     },
-    products: DEFAULT_CONTENT.products.map(
-      (def) => ({ ...def, ...saved.products?.find((p) => p.slug === def.slug) })
-    ),
+    products: DEFAULT_CONTENT.products.map((def) => {
+      const s = saved.products?.find((p) => p.slug === def.slug);
+      return { ...def, ...s, ne: { ...def.ne, ...s?.ne } };
+    }),
   };
 }
 

@@ -61,7 +61,7 @@ function generateParticles(count: number): Particle[] {
   }));
 }
 
-export default function ProcessIntro() {
+export default function ProcessIntro({ eyebrow, title }: { eyebrow: string; title: { pre: string; em: string; post: string } }) {
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const emRef = useRef<HTMLElement>(null);
@@ -178,7 +178,7 @@ export default function ProcessIntro() {
       ref={sectionRef}
       className="relative mx-auto max-w-[1320px] overflow-x-clip px-5 pb-10 pt-[clamp(140px,18vh,200px)] sm:px-8"
     >
-      <Eyebrow className="mb-7">THE PROCESS</Eyebrow>
+      <Eyebrow className="mb-7">{eyebrow}</Eyebrow>
       <div className="relative max-w-[1000px]">
         {/* Decorative "oxygen" particles, laid out across the headline's box.
             A sibling of the <h1> (not a child) so word-splitting never
@@ -221,7 +221,7 @@ export default function ProcessIntro() {
           ref={headingRef}
           className="relative max-w-[1000px] font-display text-[clamp(52px,7.6vw,116px)] font-semibold leading-[0.95] tracking-[-0.025em] text-ink"
         >
-          Heat, without oxygen. <em ref={emRef} className="not-italic text-leaf">Nothing burns.</em>
+          {title.pre}<em ref={emRef} className="not-italic text-leaf">{title.em}</em>{title.post}
         </h1>
       </div>
     </section>

@@ -305,7 +305,7 @@ export const fuelCharSections = [
   {
     title: "Black carbon",
     body:
-      "Carbon black is used by many industries as a raw material or main ingredient. Its chemical structure strengthens, lengthens endurance and tolerance, and improves colouring.",
+      "Carbon black is used by many industries as a raw material or main ingredient. Its chemical structure strengthens, lengthens endurance and tolerance, and improves colouring. Our pyrolysis carbon powder is packed and sold under the Black Cat brand.",
     items: [
       "Cement Industries",
       "Steel Industries",
@@ -481,6 +481,11 @@ export const sustainabilityBenefits = [
     n: "04",
     title: "Supports responsible waste management",
     body: "A structured collection and processing route for end-of-life tyres across Nepal.",
+  },
+  {
+    n: "05",
+    title: "Treats and reuses its own water",
+    body: "An effluent treatment plant separates process residues from water and returns the water to the plant, so no polluted water leaves the site.",
   },
 ];
 

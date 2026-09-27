@@ -35,11 +35,13 @@ export default async function Footer() {
             <Link href={href("/products/pyrolysis-oil")} className={linkClass}>{f.pyrolysisOil}</Link>
             <Link href={href("/products/fuel-char")} className={linkClass}>{f.fuelChar}</Link>
             <Link href={href("/products/recovered-steel")} className={linkClass}>{f.recoveredSteel}</Link>
+            <Link href={href("/about-tpo")} className={linkClass}>{f.aboutTpo}</Link>
           </div>
 
           <div className="flex flex-col text-sm">
             <span className="font-mono-label mb-1.5 text-[11px] text-leaf/80">{f.company}</span>
             <Link href={href("/about")} className={linkClass}>{f.about}</Link>
+            <Link href={href("/why-us")} className={linkClass}>{f.whyUs}</Link>
             <Link href={href("/process")} className={linkClass}>{f.process}</Link>
             <Link href={href("/sustainability")} className={linkClass}>{f.sustainability}</Link>
             <Link href={href("/faq")} className={linkClass}>{f.faq}</Link>

@@ -48,7 +48,7 @@ export default async function SustainabilityPage() {
       </section>
 
       <Container className="py-[clamp(80px,10vw,140px)]">
-        <div className="grid grid-cols-1 gap-14 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-14 sm:grid-cols-2 lg:grid-cols-3">
           {sustainabilityBenefits.map((b, i) => (
             <RevealOnScroll key={b.n} delay={i * 80} className="flex flex-col gap-3.5">
               <span className="font-mono-label text-xs text-leaf">{b.n}</span>

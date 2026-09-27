@@ -25,7 +25,7 @@ export type HeaderLabels = {
 const OTHER: Record<Locale, Locale> = { en: "ne", ne: "en" };
 
 /** Same page in the other language, e.g. /about ⇄ /ne/about. */
-function LanguageToggle({ labels, className = "", onClick }: { labels: HeaderLabels; className?: string; onClick?: () => void }) {
+function LanguageToggle({ labels, className = "", compact = false, onClick }: { labels: HeaderLabels; className?: string; compact?: boolean; onClick?: () => void }) {
   const { locale } = useLocale();
   const { path } = parsePath(usePathname());
   const other = OTHER[locale];
@@ -39,7 +39,7 @@ function LanguageToggle({ labels, className = "", onClick }: { labels: HeaderLab
       className={`inline-flex items-center gap-1.5 rounded-full border border-ink/15 px-3 py-1.5 text-[13px] font-semibold text-ink transition-colors hover:border-forest hover:text-forest ${className}`}
     >
       <Languages className="h-3.5 w-3.5" aria-hidden="true" />
-      {labels.switchTo}
+      <span className={compact ? "hidden xl:inline" : ""}>{labels.switchTo}</span>
     </Link>
   );
 }
@@ -70,7 +70,7 @@ export default function Header({ labels }: { labels: HeaderLabels }) {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-5 lg:flex xl:gap-7" aria-label="Primary">
+        <nav className="hidden items-center gap-4 whitespace-nowrap lg:flex xl:gap-6" aria-label="Primary">
           {labels.items.map((item) =>
             item.children ? (
               <div
@@ -80,7 +80,7 @@ export default function Header({ labels }: { labels: HeaderLabels }) {
                 onMouseLeave={() => setProductsOpen(false)}
               >
                 <button
-                  className={`flex items-center gap-1 border-b-[1.5px] py-1.5 text-sm font-medium ${
+                  className={`flex items-center gap-1 border-b-[1.5px] py-1.5 text-[13px] font-medium xl:text-sm ${
                     isActive(item.href) ? "border-leaf text-ink" : "border-transparent text-muted-3"
                   }`}
                   aria-expanded={productsOpen}
@@ -115,7 +115,7 @@ export default function Header({ labels }: { labels: HeaderLabels }) {
               <Link
                 key={item.href}
                 href={href(item.href)}
-                className={`border-b-[1.5px] py-1.5 text-sm font-medium ${
+                className={`border-b-[1.5px] py-1.5 text-[13px] font-medium xl:text-sm ${
                   isActive(item.href) ? "border-leaf text-ink" : "border-transparent text-muted-3"
                 }`}
                 aria-current={isActive(item.href) ? "page" : undefined}
@@ -124,8 +124,8 @@ export default function Header({ labels }: { labels: HeaderLabels }) {
               </Link>
             )
           )}
-          <LanguageToggle labels={labels} />
-          <Button href={href("/contact")} variant="forest" className="px-[18px] py-2.5 text-sm">
+          <LanguageToggle labels={labels} compact className="px-2.5 xl:px-3" />
+          <Button href={href("/contact")} variant="forest" className="whitespace-nowrap px-4 py-2.5 text-[13px] xl:px-[18px] xl:text-sm">
             {labels.requestQuote}
           </Button>
         </nav>

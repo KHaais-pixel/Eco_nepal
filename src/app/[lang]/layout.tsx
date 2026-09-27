@@ -69,6 +69,7 @@ export default async function SiteLayout({ children }: LayoutProps<"/[lang]">) {
                 items: [
                   { label: t.nav.home, href: "/" },
                   { label: t.nav.about, href: "/about" },
+                  { label: t.nav.whyUs, href: "/why-us" },
                   { label: t.nav.products, href: "/products", children: t.nav.productLinks },
                   { label: t.nav.process, href: "/process" },
                   { label: t.nav.sustainability, href: "/sustainability" },

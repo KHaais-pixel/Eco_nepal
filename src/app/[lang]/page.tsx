@@ -77,8 +77,68 @@ export default async function HomePage() {
       {/* One tyre, four stages — sticky scroll story */}
       <HomeStoryScroll labels={story} />
 
+      {/* The plant at a glance — published annual figures */}
+      <section className="bg-deep text-cream">
+        <div className="mx-auto max-w-[1320px] px-5 py-[clamp(96px,12vw,160px)] sm:px-8">
+          <div className="grid grid-cols-1 gap-12 md:grid-cols-[1fr_1.1fr] md:gap-24">
+            <RevealOnScroll>
+              <Eyebrow tone="lime" className="mb-6">{h.glance.eyebrow}</Eyebrow>
+              <h2 className="mb-7 font-display text-[clamp(36px,4.4vw,64px)] font-semibold leading-[1.02] tracking-[-0.02em]">
+                {h.glance.title.pre}
+                <em className="not-italic text-lime">{h.glance.title.em}</em>
+                {h.glance.title.post}
+              </h2>
+              <p className="max-w-[520px] text-[16px] leading-[1.65] text-cream/75">{h.glance.text}</p>
+            </RevealOnScroll>
+            <div className="grid grid-cols-1 gap-px border-y border-cream/[0.14] bg-cream/[0.14] sm:grid-cols-2">
+              {h.glance.stats.map((s, i) => (
+                <RevealOnScroll key={s.label} delay={i * 80} className="flex flex-col gap-2 bg-deep py-7 sm:pr-8">
+                  <div className="font-display text-[clamp(44px,5vw,72px)] font-semibold leading-none tracking-[-0.03em] text-lime">
+                    {s.value}
+                  </div>
+                  <div className="font-mono-label text-[11px] text-cream/60">{s.unit}</div>
+                  <div className="text-[15px] leading-[1.5] text-cream/85">{s.label}</div>
+                </RevealOnScroll>
+              ))}
+            </div>
+          </div>
+          <p className="font-mono-label mt-10 text-[11px] leading-[1.5] text-cream/50">{h.glance.note}</p>
+        </div>
+      </section>
+
       {/* What we produce — scroll-scrubbed tyre-to-products animation */}
       <ProductsScrub products={products} labels={h.produce} />
+
+      {/* Why us — three promises and the motto */}
+      <section className="border-y border-ink/[0.08] bg-stone">
+        <div className="mx-auto max-w-[1320px] px-5 py-[clamp(80px,10vw,130px)] sm:px-8">
+          <RevealOnScroll className="mb-12 flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <Eyebrow className="mb-6">{h.why.eyebrow}</Eyebrow>
+              <h2 className="max-w-[820px] font-display text-[clamp(32px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-ink">
+                {h.why.slogan}
+              </h2>
+            </div>
+            <Link href={href("/why-us")} className="-my-3 py-3 text-[15px] font-semibold text-forest hover:text-leaf">
+              {h.why.link}
+            </Link>
+          </RevealOnScroll>
+          <div className="grid grid-cols-1 gap-px border-y border-ink/[0.1] bg-ink/[0.1] sm:grid-cols-3">
+            {h.why.promises.map((p, i) => (
+              <RevealOnScroll key={p.title} delay={i * 80} className="flex flex-col gap-3 bg-stone py-8 sm:pr-8">
+                <h3 className="font-display text-[28px] font-semibold leading-[1.1] text-ink">{p.title}</h3>
+                <p className="text-[15px] leading-[1.6] text-muted-2">{p.body}</p>
+              </RevealOnScroll>
+            ))}
+          </div>
+          <RevealOnScroll className="mt-12 flex flex-wrap items-baseline gap-x-5 gap-y-2">
+            <span className="font-mono-label text-[13px] tracking-[0.18em] text-forest">
+              {h.why.motto.map((m) => m.toUpperCase()).join(" • ")}
+            </span>
+            <span className="font-display text-[18px] font-medium text-muted-2">{h.why.mottoLine}</span>
+          </RevealOnScroll>
+        </div>
+      </section>
 
       {/* Company brochure — scroll-driven 3D page turns */}
       <BrochureFlip pages={brochurePages} pdf={brochure.pdf} labels={h.brochure} />

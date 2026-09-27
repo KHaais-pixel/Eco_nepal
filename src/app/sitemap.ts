@@ -6,6 +6,8 @@ const baseUrl = "https://www.econepalenergy.com.np";
 const routes = [
   "",
   "/about",
+  "/why-us",
+  "/about-tpo",
   "/products",
   "/products/pyrolysis-oil",
   "/products/fuel-char",

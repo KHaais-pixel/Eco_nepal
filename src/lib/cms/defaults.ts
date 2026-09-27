@@ -49,9 +49,11 @@ export const DEFAULT_CONTENT: SiteContent = {
       quote:
         "We are proud to be a pioneer in Nepal’s pyrolysis industry, leading the production of pyrolysis oil from waste tires and rubber scraps.",
       paragraphs: [
-        "Our journey thus far has been marked by dedication, innovation, and integrity. With a skilled team, experienced management, and state-of-the-art infrastructure, we have quickly gained the trust and appreciation of our clients.",
-        "The promoters bring decades of experience across diverse industries — from large-scale noodle and biscuit production to GI pipe fittings, brick production, furnace oil, and automobile businesses — giving us a strong foundation to navigate challenges and seize opportunities.",
-        "Together, we envision a cleaner and more sustainable Nepal, where innovation and responsibility go hand in hand.",
+        "Hello, and welcome to Econepal Energy Industries Pvt. Ltd. (EEI). This innovative approach not only addresses critical environmental challenges but also contributes to Nepal’s economic growth. Our mission is to expand the capacity of this promising industry and position it as a leader within the nation.",
+        "Our journey thus far has been marked by dedication, innovation, and integrity. With a skilled team, experienced management, and state-of-the-art infrastructure, we have quickly gained the trust and appreciation of our clients. Guided by a commitment to ethical business practices and excellence, we aim to set new benchmarks in this sector.",
+        "The promoters of EEI bring decades of experience in diverse industries, ranging from large-scale noodle and biscuit production to GI pipe fittings manufacturing, Chinese brick production, furnace oil production, and automobile businesses. This vast experience provides us with a strong foundation to navigate challenges and seize opportunities.",
+        "Our strengths lie in operating the largest pyrolysis recycling facility in the region, supported by advanced equipment, efficient financial management, and a dedicated workforce. We are driven by our core values: commitment, mobility, exceptional customer service, swift action, and responsible stakeholder engagement.",
+        "Together, we envision a cleaner and more sustainable Nepal, where innovation and responsibility go hand in hand. Thank you for being a part of our journey.",
       ],
     },
     ne: companyNe,
@@ -79,7 +81,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       tag: homeProducts[1].tag,
       short: homeProducts[1].short,
       description:
-        "The carbon-rich solid left after tyre pyrolysis. Can be considered for selected industrial fuel applications and material uses, depending on its quality, composition, and the requirements of the end user.",
+        "The carbon-rich solid left after tyre pyrolysis, sold under our Black Cat brand. Can be considered for selected industrial fuel applications and material uses, depending on its quality, composition, and the requirements of the end user.",
       image: homeProducts[1].imageSrc,
       imageAlt: homeProducts[1].imageAlt,
       applications: [...fuelCharApplications],

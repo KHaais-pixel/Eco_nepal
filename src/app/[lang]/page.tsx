@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Container from "@/components/Container";
 import Button from "@/components/Button";
 import Eyebrow from "@/components/Eyebrow";
-import HeroVideo from "@/components/HeroVideo";
 import RevealOnScroll from "@/components/RevealOnScroll";
 import HomeStoryScroll from "@/components/HomeStoryScroll";
-import ProductsScrub from "@/components/home/ProductsScrub";
 import BrochureFlip from "@/components/home/BrochureFlip";
 import CTABanner from "@/components/CTABanner";
 import { brochure, storyItems } from "@/lib/site-data";
-import { getProducts } from "@/lib/cms/content";
 import { getI18n } from "@/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -19,17 +15,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const { locale, t, href } = await getI18n();
+  const { t, href } = await getI18n();
   const h = t.home;
-  const products = (await getProducts(locale)).map((p) => ({
-    num: p.num,
-    name: p.name,
-    tag: p.tag,
-    short: p.short,
-    href: href(`/products/${p.slug}`),
-    imageSrc: p.image,
-    imageAlt: p.imageAlt,
-  }));
   const story = {
     eyebrow: h.story.eyebrow,
     videoAria: h.story.videoAria,
@@ -59,10 +46,6 @@ export default async function HomePage() {
           </div>
         </RevealOnScroll>
       </section>
-
-      <Container>
-        <HeroVideo labels={{ aria: h.videoAria, mute: h.mute, unmute: h.unmute }} />
-      </Container>
 
       {/* Statement */}
       <section className="mx-auto max-w-[1100px] px-5 py-[clamp(96px,14vw,180px)] sm:px-8">
@@ -105,9 +88,6 @@ export default async function HomePage() {
           <p className="font-mono-label mt-10 text-[11px] leading-[1.5] text-cream/50">{h.glance.note}</p>
         </div>
       </section>
-
-      {/* What we produce — scroll-scrubbed tyre-to-products animation */}
-      <ProductsScrub products={products} labels={h.produce} />
 
       {/* Why us — three promises and the motto */}
       <section className="border-y border-ink/[0.08] bg-stone">

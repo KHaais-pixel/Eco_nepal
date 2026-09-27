@@ -74,9 +74,6 @@ const en = {
       "Eco Nepal Energy Industries converts end-of-life tyres into pyrolysis oil, fuel char and recovered steel, keeping waste out of landfills and open fires and putting it back to work in Nepal’s industries.",
     exploreProducts: "Explore products",
     howItWorks: "How it works →",
-    videoAria: "Waste tyre recovery at the Eco Nepal Energy facility",
-    unmute: "Unmute video",
-    mute: "Mute video",
     statement1: "A tyre takes centuries to break down. Burned in the open, it poisons the air. ",
     statement2: "We heat it without oxygen instead, and recover almost everything it was made of.",
     story: {
@@ -113,13 +110,6 @@ const en = {
       motto: ["Reduce", "Recycle", "Regenerate"],
       mottoLine: "“Green Earth is Our Dream”",
       link: "Why choose us →",
-    },
-    produce: {
-      title: "What we produce",
-      allProducts: "All products →",
-      oil: "OIL",
-      char: "CHAR",
-      steel: "STEEL",
     },
     brochure: {
       eyebrow: "COMPANY BROCHURE",

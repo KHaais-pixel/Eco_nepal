@@ -91,7 +91,7 @@ export default function Header({ labels }: { labels: HeaderLabels }) {
                   <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
                 {productsOpen && (
-                  <div className="absolute left-0 top-full w-64 rounded-2xl border border-ink/10 bg-cream p-2 shadow-lg">
+                  <div className="absolute left-0 top-full w-80 whitespace-normal rounded-2xl border border-ink/10 bg-cream p-2 shadow-lg">
                     {item.children.map((child) => (
                       <Link
                         key={child.href}

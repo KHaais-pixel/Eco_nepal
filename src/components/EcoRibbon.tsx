@@ -20,8 +20,12 @@ const CONTENT_MAX = 1320; // matches the site's max-w-[1320px] containers
 
 type Pt = { x: number; y: number };
 type Leaf = { len: number; x: number; y: number; angle: number; size: number; fill: string };
-/** A cropped piece of the ribbon, painted once in its own small SVG at (x, y). */
-type Chunk = { d: string; start: number; length: number; x: number; y: number; w: number; h: number };
+/**
+ * A cropped piece of the ribbon, painted once in its own small SVG at (x, y).
+ * `dir` is 0 for pieces running down a margin (revealed top-down) and ±1 for
+ * pieces of a crossing, which also move sideways (revealed along x too).
+ */
+type Chunk = { d: string; start: number; length: number; x: number; y: number; w: number; h: number; dir: -1 | 0 | 1 };
 type Geometry = { w: number; h: number; chunks: Chunk[]; sw: number; leaves: Leaf[] };
 
 const LEAF_FILLS = ["#2f7a4d", "#6fae45", "#1f4d33", "#8cc152"];
@@ -103,6 +107,8 @@ function layout(wrapper: HTMLElement) {
   }
 
   const pts: Pt[] = [];
+  // Point-index ranges of each crossing, so pieces never straddle a bend.
+  const spans: { from: number; to: number; dir: -1 | 1 }[] = [];
   let side: 0 | 1 = 0;
   let y = 0;
   const run = (toY: number) => {
@@ -117,6 +123,7 @@ function layout(wrapper: HTMLElement) {
     const c1 = { x: a.x, y: a.y + span * 0.55 };
     const c2 = { x: b.x, y: b.y - span * 0.55 };
     const n = Math.ceil(Math.hypot(b.x - a.x, span) / STEP);
+    spans.push({ from: pts.length, to: pts.length + n, dir: b.x > a.x ? 1 : -1 });
     for (let i = 0; i <= n; i++) {
       const t = i / n;
       const u = 1 - t;
@@ -149,13 +156,22 @@ function layout(wrapper: HTMLElement) {
   }
 
   // Split into short pieces, each painted once in its own tightly cropped
-  // SVG. Growth is a reveal from the top done purely with GPU transforms
-  // (see render), so scrolling never repaints the ribbon. Neighbours overlap
-  // by one point with flat ends, so joins are invisible.
+  // SVG. Growth is a reveal done purely with GPU transforms (see render), so
+  // scrolling never repaints the ribbon. Crossings get pieces of their own:
+  // they are monotonic in x and y, so a box clip reveals them exactly.
+  // Neighbours overlap by one point with flat ends, so joins are invisible.
+  const ranges: { from: number; to: number; dir: -1 | 0 | 1 }[] = [];
+  let at = 0;
+  for (const c of spans) {
+    if (c.from > at) ranges.push({ from: at, to: c.from, dir: 0 });
+    ranges.push(c);
+    at = c.to;
+  }
+  if (at < pts.length - 1) ranges.push({ from: at, to: pts.length - 1, dir: 0 });
   const bleed = sw + 4;
   const chunks: Chunk[] = [];
-  for (let i = 0; i < pts.length - 1; i += CHUNK_PTS) {
-    const end = Math.min(i + CHUNK_PTS + 1, pts.length - 1);
+  for (const r of ranges) for (let i = r.from; i < r.to; i += CHUNK_PTS) {
+    const end = Math.min(i + CHUNK_PTS + 1, r.to);
     const seg = pts.slice(i, end + 1);
     const x0 = Math.floor(Math.min(...seg.map((p) => p.x)) - bleed);
     const y0 = Math.floor(Math.min(...seg.map((p) => p.y)) - bleed);
@@ -164,7 +180,7 @@ function layout(wrapper: HTMLElement) {
     const d = seg.map((p, k) => `${k ? "L" : "M"}${(p.x - x0).toFixed(1)} ${(p.y - y0).toFixed(1)}`).join("");
     const start = lens[i];
     const length = lens[end] - lens[i];
-    chunks.push({ d, start, length, x: x0, y: y0, w: x1 - x0, h: y1 - y0 });
+    chunks.push({ d, start, length, x: x0, y: y0, w: x1 - x0, h: y1 - y0, dir: r.dir });
   }
   return { geometry: { w, h, chunks, sw, leaves }, pts, lens };
 }
@@ -258,28 +274,42 @@ export default function EcoRibbon() {
     const chunks = geo.chunks;
     const clips = clipRefs.current.slice(0, chunks.length);
     const inners = innerRefs.current.slice(0, chunks.length);
-    const shownPx = chunks.map(() => -1);
+    const shownPx = chunks.map(() => "");
     const leaves = leafRefs.current.slice(0, geo.leaves.length);
     const shown = geo.leaves.map(() => false);
     const state = { len: Math.min(lenRef.current, total) };
 
-    // Reveal a piece down to page-y `tipY`: the clip box slides up by the
-    // hidden amount while its content slides back down by the same amount,
+    // A crossing's box clip runs this far ahead of the tip so the stroke's
+    // full width shows; the sprout covers the overshoot.
+    const pad = geo.sw / 2 + 3;
+
+    // Reveal a piece up to the tip at (tipX, tipY): the clip box slides away
+    // by the hidden amount while its content slides back by the same amount,
     // so the drawing stays put and only the visible window moves. Both are
     // transforms on composited layers: no layout, no paint.
-    const reveal = (c: number, tipY: number) => {
+    const reveal = (c: number, len: number, tipX: number, tipY: number) => {
       const chunk = chunks[c];
-      const px = Math.round(clamp(tipY - chunk.y, 0, chunk.h));
-      if (px === shownPx[c]) return; // untouched pieces cost nothing
-      shownPx[c] = px;
+      let hx = 0;
+      let hy = 0;
+      if (len <= chunk.start) hy = chunk.h;
+      else if (len < chunk.start + chunk.length) {
+        const extra = chunk.dir ? pad : 0;
+        hy = Math.round(chunk.h - clamp(tipY + extra - chunk.y, 0, chunk.h));
+        // Left-to-right hides the right side (shift left), and vice versa.
+        if (chunk.dir === 1) hx = -Math.round(chunk.w - clamp(tipX + pad - chunk.x, 0, chunk.w));
+        if (chunk.dir === -1) hx = Math.round(clamp(tipX - pad - chunk.x, 0, chunk.w));
+      }
+      const key = `${hx},${hy}`;
+      if (key === shownPx[c]) return; // untouched pieces cost nothing
+      shownPx[c] = key;
       const clip = clips[c];
       const inner = inners[c];
       if (!clip || !inner) return;
-      const hidden = chunk.h - px;
-      const active = px > 0 && px < chunk.h;
-      clip.style.visibility = px > 0 ? "visible" : "hidden";
-      clip.style.transform = hidden ? `translate3d(0, ${-hidden}px, 0)` : "";
-      inner.style.transform = hidden ? `translate3d(0, ${hidden}px, 0)` : "";
+      const visible = hy < chunk.h && Math.abs(hx) < chunk.w;
+      const active = visible && (hx !== 0 || hy !== 0);
+      clip.style.visibility = visible ? "visible" : "hidden";
+      clip.style.transform = active ? `translate3d(${hx}px, ${-hy}px, 0)` : "";
+      inner.style.transform = active ? `translate3d(${-hx}px, ${hy}px, 0)` : "";
       // Only the growing piece is kept on its own GPU layers.
       clip.style.willChange = inner.style.willChange = active ? "transform" : "auto";
     };
@@ -288,8 +318,8 @@ export default function EcoRibbon() {
       const len = state.len;
       lenRef.current = len;
       const { x, y, angle } = pointAt(pts, lens, Math.max(len, 1));
-      const tipY = len >= total - 0.5 ? Infinity : y;
-      for (let c = 0; c < chunks.length; c++) reveal(c, tipY);
+      const drawn = len >= total - 0.5 ? Infinity : len;
+      for (let c = 0; c < chunks.length; c++) reveal(c, drawn, x, y);
       const tip = tipRef.current;
       if (tip) {
         tip.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotate(${angle.toFixed(1)}deg)`;
